@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import os
 import re
 import shutil
@@ -14,6 +15,13 @@ import plotly.io as pio
 from Bio import SeqIO
 
 from teviewer.backends.blast_gff import write_blast_gff
+from teviewer.backends.flexidot_gff import (
+    persistent_flexidot_color_config_path,
+    persistent_flexidot_legend_path,
+    resolve_gff_paths_for_fastas,
+    write_flexidot_gff_legend_png,
+    _gff_feature_display_labels,
+)
 from teviewer.backends.crop_end_divergence import crop_end_div
 from teviewer.backends.crop_end_gap import crop_end_gap
 from teviewer.backends.gui_functions import (
@@ -34,6 +42,8 @@ from teviewer.backends.teaid_plotter import (
     teaid_plotter,
 )
 from teviewer.backends.job_cancel import JobCancelledError, JobCancellation, check_cancelled
+
+logger = logging.getLogger(__name__)
 from teviewer.backends.thread_budget import analysis_threads_per_job
 from teviewer.backends.tsd_search import TSD_identifier
 from teviewer.job_options import (
@@ -271,10 +281,70 @@ def cleanup_flexidot_intermediates(output_dir: Path, keep_paths: Iterable[Path])
             pass
 
 
+def _new_flexidot_legend_pngs(output_dir: Path, before: set[Path]) -> list[Path]:
+    """Flexidot-native GFF legend images created during a run."""
+    after = _png_paths_in_dir(output_dir)
+    return sorted(
+        (
+            path
+            for path in (after - before)
+            if path.is_file() and "legend" in path.name.lower() and "gff" in path.name.lower()
+        ),
+        key=lambda p: p.stat().st_size,
+        reverse=True,
+    )
+
+
+def _finalize_flexidot_gff_sidecars(
+    output_dir: Path,
+    output_stem: str,
+    before: set[Path],
+    *,
+    gff_paths: list[Path] | None = None,
+) -> tuple[list[str], list[Path]]:
+    """Keep editable color config and a legend PNG for GFF-shaded Flexidot plots."""
+    output_dir = output_dir.expanduser().resolve()
+    created: list[str] = []
+    keep: list[Path] = []
+
+    persist_config = persistent_flexidot_color_config_path(output_dir, output_stem)
+    temp_config = output_dir / f".teviewer_flexidot_{output_stem}.gff.colors.config"
+    if temp_config.is_file():
+        shutil.copy2(temp_config, persist_config)
+    if persist_config.is_file():
+        keep.append(persist_config)
+        created.append(str(persist_config.resolve()))
+
+    legend_dest = persistent_flexidot_legend_path(output_dir, output_stem)
+    native_legends = _new_flexidot_legend_pngs(output_dir, before)
+    if native_legends:
+        if legend_dest.exists():
+            legend_dest.unlink()
+        native_legends[0].rename(legend_dest)
+    elif persist_config.is_file():
+        try:
+            labels = _gff_feature_display_labels(gff_paths or [])
+            write_flexidot_gff_legend_png(
+                persist_config,
+                legend_dest,
+                display_labels=labels,
+            )
+        except (OSError, ValueError) as exc:
+            logger.warning("Flexidot legend PNG skipped: %s", exc)
+
+    if legend_dest.is_file():
+        keep.append(legend_dest)
+        created.append(str(legend_dest.resolve()))
+    return created, keep
+
+
 def finalize_flexidot_outputs(
     output_dir: Path,
     seq_files: list[Path],
     before: set[Path],
+    *,
+    use_gff: bool = False,
+    gff_source_fastas: list[Path] | None = None,
 ) -> list[str]:
     """Keep the primary Flexidot PNG as ``{stem}_flexidot.png``; drop extra panels."""
     output_dir = output_dir.expanduser().resolve()
@@ -301,8 +371,21 @@ def finalize_flexidot_outputs(
         except OSError:
             pass
 
-    cleanup_flexidot_intermediates(output_dir, [dest])
-    return [str(dest.resolve())]
+    keep_paths = [dest]
+    outputs = [str(dest.resolve())]
+    if use_gff:
+        gff_paths = resolve_gff_paths_for_fastas(gff_source_fastas or seq_files)
+        sidecar_paths, sidecar_keep = _finalize_flexidot_gff_sidecars(
+            output_dir,
+            base,
+            before,
+            gff_paths=gff_paths,
+        )
+        outputs.extend(sidecar_paths)
+        keep_paths.extend(sidecar_keep)
+
+    cleanup_flexidot_intermediates(output_dir, keep_paths)
+    return outputs
 
 
 def effective_batch_workers(requested: int, num_sequences: int) -> int:
@@ -368,7 +451,13 @@ def run_flexidot_combined(
         finally:
             if combined.is_file():
                 combined.unlink(missing_ok=True)
-        return finalize_flexidot_outputs(out_dir, seq_files, before)
+        return finalize_flexidot_outputs(
+            out_dir,
+            seq_files,
+            before,
+            use_gff=flex_opts.use_gff,
+            gff_source_fastas=seq_files,
+        )
 
 
 def run_on_sequence(
@@ -630,7 +719,13 @@ def run_on_sequence(
                 cancel=cancel,
             )
             created.extend(
-                finalize_flexidot_outputs(out_path, [seq_path.resolve()], before)
+                finalize_flexidot_outputs(
+                    out_path,
+                    [seq_path.resolve()],
+                    before,
+                    use_gff=flex_opts.use_gff,
+                    gff_source_fastas=[seq_path.resolve()],
+                )
             )
 
     elif func_name == "te_annotation":

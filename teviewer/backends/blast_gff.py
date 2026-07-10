@@ -6,6 +6,7 @@ from operator import itemgetter
 from pathlib import Path
 
 from teviewer.backends.blast_genome_plot import read_blast_table
+from teviewer.backends.flexidot_gff import distinct_feature_color
 
 
 def blast_gff_output_path(blast_txt: Path) -> Path:
@@ -30,6 +31,15 @@ def _normalize_strand(sstart: int, send: int, sstrand: str) -> tuple[int, int, s
     return send, sstart, "-"
 
 
+def _gff_escape_attr(value: str) -> str:
+    return str(value).replace(";", "%3B").replace("=", "%3D").replace("\t", " ")
+
+
+def _blast_gff_attributes(query: str, color: str) -> str:
+    safe_query = _gff_escape_attr(query)
+    return f"ID={safe_query};Name={safe_query};type={safe_query};color={color}"
+
+
 def blast_hits_to_gff_rows(
     blast_txt: Path,
     *,
@@ -39,6 +49,9 @@ def blast_hits_to_gff_rows(
     df = read_blast_table(blast_txt)
     if df.empty:
         return []
+
+    queries = sorted({str(q) for q in df["qseqid"].astype(str)})
+    color_by_query = {query: distinct_feature_color(query) for query in queries}
 
     rows: list[list[str]] = []
     for _, hit in df.iterrows():
@@ -50,6 +63,7 @@ def blast_hits_to_gff_rows(
         sstart = int(hit["sstart"])
         send = int(hit["send"])
         start, end, strand = _normalize_strand(sstart, send, str(hit.get("sstrand", "")))
+        color = color_by_query[query]
 
         rows.append(
             [
@@ -61,7 +75,7 @@ def blast_hits_to_gff_rows(
                 str(bit_score),
                 strand,
                 ".",
-                "repeat",
+                _blast_gff_attributes(query, color),
             ]
         )
 

@@ -7,7 +7,7 @@ from pathlib import Path
 
 from Bio import SeqIO
 
-from teviewer.backends.annotation_colors import feature_type_color
+from teviewer.backends.annotation_colors import feature_type_color, load_feature_type_colors
 from teviewer.backends.gff_features import (
     _seqid_matches,
     find_companion_gff,
@@ -22,6 +22,148 @@ logger = logging.getLogger(__name__)
 _FLEXIDOT_GFF_ALPHA = 0.75
 _FLEXIDOT_GFF_ALPHA_OTHER = 0.5
 _FLEXIDOT_GFF_ZOOM = 0
+
+_DISTINCT_FEATURE_PALETTE = (
+    "#e41a1c",
+    "#377eb8",
+    "#4daf4a",
+    "#984ea3",
+    "#ff7f00",
+    "#a65628",
+    "#f781bf",
+    "#66c2a5",
+    "#8da0cb",
+    "#e78ac3",
+    "#1b9e77",
+    "#d95f02",
+    "#7570b3",
+    "#e7298a",
+    "#66a61e",
+)
+
+
+def distinct_feature_color(feature_type: str) -> str:
+    """Stable color for arbitrary GFF feature types (e.g. BLAST query names)."""
+    import zlib
+
+    known = load_feature_type_colors()
+    if feature_type in known:
+        return known[feature_type]
+    lowered = feature_type.lower()
+    for key, color in known.items():
+        if key.lower() == lowered:
+            return color
+    idx = zlib.adler32(lowered.encode("utf-8")) % len(_DISTINCT_FEATURE_PALETTE)
+    return _DISTINCT_FEATURE_PALETTE[idx]
+
+
+def persistent_flexidot_color_config_path(out_dir: Path, output_stem: str) -> Path:
+    """Saved color table users can edit between Flexidot runs."""
+    return out_dir.expanduser().resolve() / f"{output_stem}_flexidot.gff.colors.config"
+
+
+def persistent_flexidot_legend_path(out_dir: Path, output_stem: str) -> Path:
+    """Companion legend PNG for GFF-shaded Flexidot dotplots."""
+    return out_dir.expanduser().resolve() / f"{output_stem}_flexidot_legend.png"
+
+
+def resolve_user_flexidot_color_config(out_dir: Path, output_stem: str) -> Path | None:
+    """Return an existing user-editable Flexidot color config, if present."""
+    out_dir = out_dir.expanduser().resolve()
+    for candidate in (
+        persistent_flexidot_color_config_path(out_dir, output_stem),
+        out_dir / "gff_coloring.config",
+    ):
+        if candidate.is_file():
+            return candidate.resolve()
+    return None
+
+
+def parse_flexidot_color_config(path: Path) -> list[tuple[str, str, float]]:
+    """Read Flexidot ``-G`` rows as ``(feature_key, color, alpha)``."""
+    entries: list[tuple[str, str, float]] = []
+    try:
+        text = path.expanduser().resolve().read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return entries
+    for line in text.splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        parts = line.split("\t")
+        if len(parts) < 2:
+            continue
+        key = parts[0].strip()
+        color = parts[1].strip()
+        if not key or not color:
+            continue
+        try:
+            alpha = float(parts[2]) if len(parts) > 2 else _FLEXIDOT_GFF_ALPHA
+        except ValueError:
+            alpha = _FLEXIDOT_GFF_ALPHA
+        entries.append((key, color, alpha))
+    return entries
+
+
+def _gff_feature_display_labels(gff_paths: list[Path]) -> dict[str, str]:
+    """Map Flexidot color keys (lowercase type / ``*_rev``) to readable labels."""
+    labels: dict[str, str] = {}
+    for gff_path in gff_paths:
+        for feat in parse_gff(gff_path):
+            feat_type = feat.attributes.get("type", feat.feature_type)
+            display = feat.attributes.get("Name", feat_type)
+            for key in _flexidot_lookup_keys(feat_type, feat.strand):
+                if feat.strand == "-":
+                    labels[key] = f"{display} (reverse)"
+                else:
+                    labels[key] = display
+    return labels
+
+
+def write_flexidot_gff_legend_png(
+    color_config_path: Path,
+    out_path: Path,
+    *,
+    display_labels: dict[str, str] | None = None,
+) -> Path:
+    """Write a simple color legend PNG for GFF-shaded Flexidot dotplots."""
+    import matplotlib.pyplot as plt
+    from matplotlib.patches import Patch
+
+    entries = [
+        (key, color, alpha)
+        for key, color, alpha in parse_flexidot_color_config(color_config_path)
+        if key.lower() != "others"
+    ]
+    if not entries:
+        raise ValueError(f"No legend entries found in {color_config_path.name}")
+
+    labels_map = display_labels or {}
+    handles = []
+    labels = []
+    for key, color, alpha in entries:
+        label = labels_map.get(key, labels_map.get(key.lower(), key))
+        handles.append(Patch(facecolor=color, edgecolor="black", alpha=alpha))
+        labels.append(label)
+
+    row_count = len(handles)
+    fig_height = max(1.6, 0.45 * row_count + 0.8)
+    fig, ax = plt.subplots(figsize=(6.5, fig_height))
+    ax.axis("off")
+    ax.legend(
+        handles,
+        labels,
+        loc="center",
+        frameon=True,
+        fontsize=10,
+        title="GFF features",
+        title_fontsize=11,
+    )
+    out_path = out_path.expanduser().resolve()
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    fig.savefig(out_path, bbox_inches="tight", dpi=150)
+    plt.close(fig)
+    return out_path
 
 
 def resolve_gff_for_fasta(fasta_path: Path) -> Path | None:
@@ -129,7 +271,7 @@ def _feature_color_from_gff_row(feat_type: str, attributes: dict[str, str]) -> s
     raw = str(attributes.get("color", "")).strip()
     if raw.startswith("#") and len(raw) >= 4:
         return raw
-    return feature_type_color(feat_type)
+    return distinct_feature_color(feat_type)
 
 
 def _flexidot_lookup_keys(feat_type: str, strand: str) -> list[str]:
@@ -161,7 +303,7 @@ def _collect_flexidot_gff_colors(gff_paths: list[Path]) -> dict[str, str]:
             for feat_type in list_feature_types_in_annotation(gff_path):
                 if not feat_type:
                     continue
-                color = feature_type_color(feat_type)
+                color = distinct_feature_color(feat_type)
                 for key in _flexidot_lookup_keys(feat_type, "+"):
                     color_by_key[key] = color
 
@@ -185,7 +327,9 @@ def write_flexidot_color_config(
 
     lines = [
         "# TEviewer Flexidot GFF color config",
-        "# annotation_type\tcolor\ttransparency\tzoom",
+        "# Edit colors here, then re-run Flexidot with GFF shading enabled.",
+        "# Columns: annotation_type  color  transparency  zoom",
+        "# Use lowercase feature names from GFF column 3; add _rev for reverse strand.",
     ]
     for key in sorted(color_by_key.keys(), key=str.lower):
         lines.append(f"{key}\t{color_by_key[key]}\t{alpha}\t{_FLEXIDOT_GFF_ZOOM}")
@@ -232,10 +376,15 @@ def prepare_flexidot_gff_inputs(
             gff_cli_paths.append(str(source))
 
     color_config = out_dir / f".teviewer_flexidot_{output_stem}.gff.colors.config"
-    write_flexidot_color_config(prepared_gff_paths, color_config)
-    temp_paths.append(color_config)
+    user_config = resolve_user_flexidot_color_config(out_dir, output_stem)
+    if user_config is not None:
+        color_config = user_config
+        logger.info("Flexidot GFF shading: using user color config %s", color_config.name)
+    else:
+        write_flexidot_color_config(prepared_gff_paths, color_config)
+        temp_paths.append(color_config)
     logger.info(
-        "Flexidot GFF shading: %d file(s), temporary color config %s",
+        "Flexidot GFF shading: %d file(s), color config %s",
         len(gff_cli_paths),
         color_config.name,
     )

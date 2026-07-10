@@ -902,10 +902,11 @@ class FlexidotParamsDialog(QDialog):
         self._use_gff = QCheckBox("Show GFF features on dotplot (-g)")
         self._use_gff.setChecked(opts.use_gff)
         self._use_gff.setToolTip(
-            "When a companion GFF3 exists next to the FASTA (for example "
-            "{stem}.features.gff3 from the Annotation tab), Flexidot shades the "
-            "dotplot axes with those features. TEviewer writes a matching color "
-            "config automatically."
+            "When a companion GFF exists next to the FASTA (for example "
+            "{stem}.features.gff3 or {stem}_blast.gff), Flexidot shades the "
+            "dotplot with those features. TEviewer also writes "
+            "{stem}_flexidot.gff.colors.config (edit colors) and "
+            "{stem}_flexidot_legend.png (color key)."
         )
 
         form = QFormLayout()
