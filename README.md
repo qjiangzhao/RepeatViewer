@@ -16,7 +16,7 @@ TEviewer was split from [TEtrimmer](https://github.com/qjiangzhao/TEtrimmer). Cu
 
 | Tool | Description |
 |------|-------------|
-| **Blast** | BLASTN vs genome → hit table + extracted FASTA |
+| **Blast** | BLASTN vs genome → hit table + extracted FASTA; optional genome GFF (`*_blast.gff`) |
 | **TE genome map** | Plotly track view of TE hit density / identity along chromosomes (uses `*_blast.txt` after Blast; optional region in dialog) |
 | **Extend** | Extend MSA ends (default 1000 bp left/right) → `*_ext_L1000_R1000.fa`; right-click for custom distances |
 | **TEAid** | Interactive report HTML |

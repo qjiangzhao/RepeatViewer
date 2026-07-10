@@ -13,6 +13,7 @@ from typing import Callable, Iterable
 import plotly.io as pio
 from Bio import SeqIO
 
+from teviewer.backends.blast_gff import write_blast_gff
 from teviewer.backends.crop_end_divergence import crop_end_div
 from teviewer.backends.crop_end_gap import crop_end_gap
 from teviewer.backends.gui_functions import (
@@ -431,7 +432,14 @@ def run_on_sequence(
         )
         # Expose both Blast outputs so the UI highlights all newly generated files.
         if blast_txt:
-            created.append(str(Path(str(blast_txt)).resolve()))
+            blast_txt_path = Path(str(blast_txt)).resolve()
+            created.append(str(blast_txt_path))
+            if blast_opts.write_gff:
+                gff_path = write_blast_gff(
+                    blast_txt_path,
+                    minimum_bit_score=blast_opts.minimum_bit_score,
+                )
+                created.append(str(gff_path.resolve()))
         # Keep *_blast.txt for downstream plots; remove temporary BED intermediates.
         for tmp in (Path(str(blast_bed)), Path(str(blast_bed_filtered))):
             try:

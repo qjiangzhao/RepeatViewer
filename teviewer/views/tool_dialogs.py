@@ -88,8 +88,10 @@ from teviewer.job_options import (
     DEFAULT_TE_DIVERGENCE_BIN_WIDTH,
     DEFAULT_BLAST_EVALUE,
     DEFAULT_BLAST_MAX_MSA_LINES,
+    DEFAULT_BLAST_MINIMUM_BIT_SCORE,
     DEFAULT_BLAST_THREADS,
     DEFAULT_BLAST_TOP_MSA_LINES,
+    DEFAULT_BLAST_WRITE_GFF,
     DEFAULT_CONSENSUS_AMBIGUOUS,
     DEFAULT_CONSENSUS_THRESHOLD,
     DEFAULT_EXTEND_LEFT,
@@ -786,10 +788,26 @@ class BlastParamsDialog(QDialog):
         self._top_msa.setRange(10, 5000)
         self._top_msa.setValue(opts.top_msa_lines)
 
+        self._write_gff = QCheckBox("Write genome GFF from BLAST hits")
+        self._write_gff.setChecked(opts.write_gff)
+        self._write_gff.setToolTip(
+            "After Blast, write a GFF3 file next to the hit table "
+            "(coordinates on the reference genome)."
+        )
+
+        self._min_bit_score = QDoubleSpinBox()
+        self._min_bit_score.setRange(0.0, 1_000_000.0)
+        self._min_bit_score.setDecimals(1)
+        self._min_bit_score.setSingleStep(1.0)
+        self._min_bit_score.setValue(opts.minimum_bit_score)
+        self._min_bit_score.setToolTip("Only hits with bit score ≥ this value are written to GFF.")
+
         form = QFormLayout()
         form.addRow("E-value:", self._evalue)
         form.addRow("Max MSA lines:", self._max_msa)
         form.addRow("Top longest lines:", self._top_msa)
+        form.addRow(self._write_gff)
+        form.addRow("Minimum bit score (GFF):", self._min_bit_score)
 
         buttons = QDialogButtonBox(
             QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
@@ -806,6 +824,8 @@ class BlastParamsDialog(QDialog):
             e_value=normalize_blast_evalue(self._evalue.value()),
             max_msa_lines=self._max_msa.value(),
             top_msa_lines=self._top_msa.value(),
+            write_gff=self._write_gff.isChecked(),
+            minimum_bit_score=self._min_bit_score.value(),
         )
 
 

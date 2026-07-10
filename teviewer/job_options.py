@@ -14,6 +14,8 @@ MIN_BLAST_EVALUE = 1e-4
 DEFAULT_BLAST_THREADS = 1
 DEFAULT_BLAST_MAX_MSA_LINES = 100
 DEFAULT_BLAST_TOP_MSA_LINES = 70
+DEFAULT_BLAST_WRITE_GFF = False
+DEFAULT_BLAST_MINIMUM_BIT_SCORE = 0.0
 
 DEFAULT_TE_GENOME_MAP_BIN_BP = 100_000
 TE_GENOME_MAP_DENSITY_HIT_COUNT = "hit_count"
@@ -141,6 +143,8 @@ class BlastOptions:
     num_threads: int = DEFAULT_BLAST_THREADS
     max_msa_lines: int = DEFAULT_BLAST_MAX_MSA_LINES
     top_msa_lines: int = DEFAULT_BLAST_TOP_MSA_LINES
+    write_gff: bool = DEFAULT_BLAST_WRITE_GFF
+    minimum_bit_score: float = DEFAULT_BLAST_MINIMUM_BIT_SCORE
 
 
 DEFAULT_CONSENSUS_THRESHOLD = 0.8
@@ -360,6 +364,10 @@ def load_blast_options() -> BlastOptions:
         num_threads=int(v.get("num_threads", DEFAULT_BLAST_THREADS)),
         max_msa_lines=int(v.get("max_msa_lines", DEFAULT_BLAST_MAX_MSA_LINES)),
         top_msa_lines=int(v.get("top_msa_lines", DEFAULT_BLAST_TOP_MSA_LINES)),
+        write_gff=bool(v.get("write_gff", DEFAULT_BLAST_WRITE_GFF)),
+        minimum_bit_score=float(
+            v.get("minimum_bit_score", DEFAULT_BLAST_MINIMUM_BIT_SCORE)
+        ),
     )
 
 
@@ -370,6 +378,8 @@ def save_blast_options(opts: BlastOptions) -> None:
             "e_value": opts.e_value,
             "max_msa_lines": opts.max_msa_lines,
             "top_msa_lines": opts.top_msa_lines,
+            "write_gff": opts.write_gff,
+            "minimum_bit_score": opts.minimum_bit_score,
         },
     )
 
