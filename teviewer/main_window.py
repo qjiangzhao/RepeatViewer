@@ -194,6 +194,7 @@ from teviewer.views.toolbar_dialog import (
 )
 from teviewer.widgets.browser_panel_settings import load_browser_panel_font_size
 from teviewer.ui.platform import reveal_in_file_manager
+from teviewer.ui.text_editor import open_in_text_editor
 from teviewer.ui.theme import application_stylesheet
 from teviewer.widgets.hidden_folders import (
     hide_root_folder,
@@ -547,6 +548,7 @@ class FileListWidget(QListWidget):
     """File list that supports dragging files as URLs."""
 
     open_in_preview_requested = Signal(list)
+    open_in_text_editor_requested = Signal(list)
     delete_files_requested = Signal(list)
     duplicate_files_requested = Signal(list)
     rename_file_requested = Signal(Path)
@@ -571,6 +573,10 @@ class FileListWidget(QListWidget):
         if len(paths) == 1:
             path = paths[0]
             menu.addAction("Open in preview", lambda: self.open_in_preview_requested.emit(paths))
+            menu.addAction(
+                "Open in text editor",
+                lambda: self.open_in_text_editor_requested.emit(paths),
+            )
             menu.addAction("Rename", lambda: self.rename_file_requested.emit(path))
             if path.suffix.lower() in _FASTA_SUFFIXES:
                 try:
@@ -605,6 +611,10 @@ class FileListWidget(QListWidget):
             menu.addAction(
                 f"Open {len(paths)} files in tabs",
                 lambda: self.open_in_preview_requested.emit(paths),
+            )
+            menu.addAction(
+                f"Open {len(paths)} files in text editor",
+                lambda: self.open_in_text_editor_requested.emit(paths),
             )
         if len(paths) == 1:
             menu.addAction(
@@ -985,6 +995,7 @@ class MainWindow(QMainWindow):
         # (itemSelectionChanged can also fire on non-click selection changes.)
         self._file_list.itemDoubleClicked.connect(self._on_file_double_clicked)
         self._file_list.open_in_preview_requested.connect(self._open_files_in_preview_tabs)
+        self._file_list.open_in_text_editor_requested.connect(self._open_selected_in_text_editor)
         self._file_list.delete_files_requested.connect(self._delete_selected_files)
         self._file_list.duplicate_files_requested.connect(self._duplicate_selected_files)
         self._file_list.rename_file_requested.connect(self._rename_file)
@@ -3214,6 +3225,34 @@ class MainWindow(QMainWindow):
             return
         for path in fasta:
             self._open_in_sequence_viewer(path)
+
+    def _open_selected_in_text_editor(self, paths: list[Path] | None = None) -> None:
+        selected = list(paths) if paths else self._selected_files()
+        files = [p.expanduser().resolve() for p in selected if p.is_file()]
+        if not files:
+            QMessageBox.information(
+                self,
+                "No file selected",
+                "Select one or more files to open in a text editor.",
+            )
+            return
+        opened = 0
+        failures: list[str] = []
+        for path in files:
+            try:
+                open_in_text_editor(path)
+                opened += 1
+            except (OSError, RuntimeError) as exc:
+                failures.append(f"{path.name}: {exc}")
+        if opened:
+            label = files[0].name if opened == 1 else f"{opened} files"
+            self._set_status_message(f"Opened in text editor: {label}", 5000)
+        if failures:
+            QMessageBox.warning(
+                self,
+                "Text editor",
+                "Some files could not be opened:\n\n" + "\n".join(failures[:6]),
+            )
 
     def _open_in_sequence_viewer(self, path: Path) -> None:
         try:

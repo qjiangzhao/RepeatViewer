@@ -382,7 +382,7 @@ def prepare_flexidot_gff_inputs(
         logger.info("Flexidot GFF shading: using user color config %s", color_config.name)
     else:
         write_flexidot_color_config(prepared_gff_paths, color_config)
-        temp_paths.append(color_config)
+        # Do not add color_config to temp_paths — finalize keeps a user-editable copy.
     logger.info(
         "Flexidot GFF shading: %d file(s), color config %s",
         len(gff_cli_paths),

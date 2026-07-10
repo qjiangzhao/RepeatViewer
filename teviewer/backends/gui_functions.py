@@ -709,6 +709,8 @@ def run_flexidot(
             except OSError:
                 pass
         for gff_path in temp_gff_paths:
+            if not os.path.basename(gff_path).startswith(".teviewer_flexidot_"):
+                continue
             if os.path.isfile(gff_path):
                 try:
                     os.unlink(gff_path)

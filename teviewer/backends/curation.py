@@ -19,6 +19,8 @@ from teviewer.backends.flexidot_gff import (
     persistent_flexidot_color_config_path,
     persistent_flexidot_legend_path,
     resolve_gff_paths_for_fastas,
+    resolve_user_flexidot_color_config,
+    write_flexidot_color_config,
     write_flexidot_gff_legend_png,
     _gff_feature_display_labels,
 )
@@ -306,11 +308,19 @@ def _finalize_flexidot_gff_sidecars(
     output_dir = output_dir.expanduser().resolve()
     created: list[str] = []
     keep: list[Path] = []
+    gff_paths = [path.expanduser().resolve() for path in (gff_paths or []) if path]
 
     persist_config = persistent_flexidot_color_config_path(output_dir, output_stem)
     temp_config = output_dir / f".teviewer_flexidot_{output_stem}.gff.colors.config"
+    user_config = resolve_user_flexidot_color_config(output_dir, output_stem)
+
     if temp_config.is_file():
         shutil.copy2(temp_config, persist_config)
+    elif user_config is not None and user_config.resolve() != persist_config.resolve():
+        shutil.copy2(user_config, persist_config)
+    elif gff_paths and not persist_config.is_file():
+        write_flexidot_color_config(gff_paths, persist_config)
+
     if persist_config.is_file():
         keep.append(persist_config)
         created.append(str(persist_config.resolve()))
@@ -323,7 +333,7 @@ def _finalize_flexidot_gff_sidecars(
         native_legends[0].rename(legend_dest)
     elif persist_config.is_file():
         try:
-            labels = _gff_feature_display_labels(gff_paths or [])
+            labels = _gff_feature_display_labels(gff_paths)
             write_flexidot_gff_legend_png(
                 persist_config,
                 legend_dest,
