@@ -753,6 +753,8 @@ class PrimerActionsMixin:
             return
         from repeatviewer.views.tool_page import ToolDialogPage
 
+        if dialog.layout() is not None:
+            dialog.layout().setContentsMargins(12, 6, 12, 12)
         page = ToolDialogPage(dialog, "Primer Database")
         self._host_in_workspace("database", page)
 

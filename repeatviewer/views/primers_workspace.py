@@ -107,32 +107,7 @@ LIST_HELP = (
 )
 
 
-class _RecordCombo(QComboBox):
-    """The record chooser of the row above the map: a small box.
-
-    A name that does not fit is cut in the middle, because record names share
-    their beginning and differ at the end. The opened list is as wide as the
-    longest name, and the whole name is in the tooltip.
-    """
-
-    def paintEvent(self, event) -> None:  # noqa: N802
-        from PySide6.QtWidgets import QStyle, QStyleOptionComboBox, QStylePainter
-
-        painter = QStylePainter(self)
-        option = QStyleOptionComboBox()
-        self.initStyleOption(option)
-        painter.drawComplexControl(QStyle.ComplexControl.CC_ComboBox, option)
-        field = self.style().subControlRect(
-            QStyle.ComplexControl.CC_ComboBox, option,
-            QStyle.SubControl.SC_ComboBoxEditField, self)
-        option.currentText = self.fontMetrics().elidedText(
-            option.currentText, Qt.TextElideMode.ElideMiddle, max(0, field.width() - 4))
-        painter.drawControl(QStyle.ControlElement.CE_ComboBoxLabel, option)
-
-    def showPopup(self) -> None:  # noqa: N802
-        view = self.view()
-        view.setMinimumWidth(max(self.width(), view.sizeHintForColumn(0) + 32))
-        super().showPopup()
+from repeatviewer.widgets.primer_design_pane import MiddleElideCombo as _RecordCombo  # noqa: E402
 
 
 def _path_row_of(widget):
@@ -753,7 +728,10 @@ class PrimersWorkspacePage(QWidget):
         """The bases dragged over become a primer; a problem shows in the note."""
         problem = self.primers.add_primer_from_region(strand)
         if problem:
+            # The note under the list is one cut line: say it where it is read.
             self.list_note.setText(problem)
+            self.statusMessage.emit(problem)
+            QMessageBox.information(self.window(), "Primer from Selection", problem)
 
     def _on_list_picked(self, kind: str) -> None:
         from repeatviewer.widgets.primers_workspace_list import KIND_PRIMER
@@ -857,6 +835,9 @@ class PrimersWorkspacePage(QWidget):
         drow.addWidget(design.design_button)
         drow.addStretch(1)
         dl.addLayout(drow)
+        end_row = getattr(design, "end_row", None)
+        if end_row is not None:
+            end_row.hide()          # its two buttons sit on top now
         # Two equal buttons over the label and field columns of the form.
         from repeatviewer.widgets.primer_design_pane import HALF_ROW_W
 
@@ -945,6 +926,8 @@ class PrimersWorkspacePage(QWidget):
             heading.hide()          # the section row already says where we are
         rail.set_panel_collapsed(False, persist=False)
         self.panel.show_primers_tab()
+        # without the strip the side is as wide as in Painting, Map and the rest
+        rail.setFixedWidth(rail._expanded_rail_width())
         self._sync_records()
         # A file that could not be read leaves the old sequence on the map, but
         # no record in the list: that is how a failed load shows.

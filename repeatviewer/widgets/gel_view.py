@@ -313,11 +313,12 @@ class GelDocumentPanel(QWidget):
             " QScrollArea#gelSideScroll, QScrollArea#gelSideScroll > QWidget"
             " { background: palette(window); }"
             " QWidget#gelHolder { background: palette(base);"
-            " border: 1px solid palette(mid); border-radius: 8px; }")
+            " border: 1px solid palette(mid); border-radius: 8px; }"
+            " QWidget#gelBar { border-radius: 5px; }")
         bar = QWidget(self)
         bar.setObjectName("gelBar")
         bl = QHBoxLayout(bar)
-        bl.setContentsMargins(12, 8, 12, 8)
+        bl.setContentsMargins(8, 5, 8, 5)
         bl.setSpacing(6)
         self.add_button = QPushButton("Add Lane", bar)
         add_menu = QMenu(self.add_button)
@@ -348,26 +349,33 @@ class GelDocumentPanel(QWidget):
         self.save_button.setMenu(save_menu)
         bl.addWidget(self.save_button)
         bl.addWidget(make_help_button(bar, "In-silico gel", GEL_HELP))
-        root.addWidget(bar)
-
         split = QSplitter(Qt.Orientation.Horizontal, self)
-        split.setContentsMargins(12, 0, 0, 12)
+        split.setContentsMargins(12, 6, 0, 12)
         holder = QWidget(split)
         holder.setObjectName("gelHolder")
         hl = QVBoxLayout(holder)
-        hl.setContentsMargins(16, 12, 16, 12)
+        hl.setContentsMargins(4, 4, 4, 12)
+        hl.setSpacing(8)
+        bar.setParent(holder)
+        hl.addWidget(bar)
+        gel_room = QVBoxLayout()
+        gel_room.setContentsMargins(12, 0, 12, 0)
         self.view = GelView(holder)
-        hl.addWidget(self.view, 1)
+        gel_room.addWidget(self.view, 1)
+        hl.addLayout(gel_room, 1)
         split.addWidget(holder)
 
         side = QWidget(split)
         side.setObjectName("gelSide")
-        side.setMinimumWidth(320)
+        # as wide as the settings side of the other sections, and its title
+        # at the same height
+        side.setMinimumWidth(330)
         side.setMaximumWidth(460)
         sl = QVBoxLayout(side)
-        sl.setContentsMargins(14, 12, 14, 12)
+        sl.setContentsMargins(10, 0, 10, 12)
         sl.setSpacing(10)
         head = QLabel("<b>Gel</b>", side)
+        head.setMinimumHeight(22)
         sl.addWidget(head)
         form = QFormLayout()
         form.setLabelAlignment(Qt.AlignmentFlag.AlignLeft)
@@ -424,6 +432,7 @@ class GelDocumentPanel(QWidget):
         scroll.setWidgetResizable(True)
         scroll.setFrameShape(QScrollArea.Shape.NoFrame)
         scroll.setWidget(side)
+        scroll.setMinimumWidth(330)     # the side is never cut off on the right
         split.addWidget(scroll)
         split.setStretchFactor(0, 1)
         split.setStretchFactor(1, 0)

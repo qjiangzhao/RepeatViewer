@@ -37,7 +37,8 @@ from repeatviewer.backends.primers import tails as rtail
 from repeatviewer.views.cloning_dialog import CLONING_HELP, RESULT_HELP
 from repeatviewer.views.sanger_dialog import _read_fasta
 from repeatviewer.widgets.help_button import make_help_button
-from repeatviewer.widgets.primer_design_pane import FIELD_W, GAP, _row, _rule, _section
+from repeatviewer.widgets.primer_design_pane import (
+    FIELD_W, GAP, MiddleElideCombo, _field_path, _row, _rule, _section)
 
 _SETTINGS_KEY = "primers/cloning"
 PANEL_W = 330
@@ -68,17 +69,15 @@ class CloningPage(QWidget):
 
         middle = QWidget(self)
         lay = QVBoxLayout(middle)
-        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setContentsMargins(12, 6, 12, 12)
         lay.setSpacing(10)
         from repeatviewer.widgets.primer_design_pane import VerdictLabel
 
         self.verdict = VerdictLabel(middle)
         self.verdict.setObjectName("cloningVerdict")
 
-        head = QHBoxLayout()
-        head.addWidget(QLabel("<b>Clone</b>", middle), 1)
-        head.addWidget(make_help_button(middle, "Clone", RESULT_HELP))
-        lay.addLayout(head)
+        # The first box starts right under the section row, as in every
+        # section; the "?" of Colony PCR below explains the table too.
         self.table = QTableWidget(0, 4, middle)
         self.table.setHorizontalHeaderLabels(["Orientation", "Insert", "Plasmid", "Colony PCR"])
         self.table.verticalHeader().hide()
@@ -115,8 +114,8 @@ class CloningPage(QWidget):
         panel = QWidget(self)
         panel.setFixedWidth(PANEL_W)
         pl = QVBoxLayout(panel)
-        pl.setContentsMargins(10, 12, 10, 12)
-        pl.setSpacing(10)
+        pl.setContentsMargins(10, 6, 10, 8)
+        pl.setSpacing(6)
         title = QHBoxLayout()
         title.addWidget(QLabel("<b>Cloning</b>", panel), 1)
         title.addWidget(make_help_button(panel, "Cloning", CLONING_HELP))
@@ -131,10 +130,10 @@ class CloningPage(QWidget):
             browse_title="Insert Sequence",
             file_filter="Sequences (*.fa *.fasta *.fas *.fna *.txt *.seq);;All files (*)",
             browse_below=True, elide_middle=True)
-        self.insert_path.setFixedWidth(FIELD_W)
+        _field_path(self.insert_path)
         self.insert_path.set_start_dir(str(self._folder))
         sl.addLayout(_row("Sequence", self.insert_path, parent=sec, top=True))
-        self.record_combo = QComboBox(sec)
+        self.record_combo = MiddleElideCombo(sec)
         self.record_combo.setFixedWidth(FIELD_W)
         sl.addLayout(_row("Record", self.record_combo, parent=sec))
         self.insert_note = QLabel(sec)
@@ -212,6 +211,7 @@ class CloningPage(QWidget):
 
         self.insert_path.path_changed.connect(self._on_pick_insert)
         self.record_combo.currentIndexChanged.connect(self._on_record)
+        self._show_record()     # a sequence handed over when the page opens
         self.vector.currentIndexChanged.connect(self._on_vector)
         for box in (self.method, self.polymerase, self.left, self.right):
             box.currentIndexChanged.connect(self.recompute)
@@ -266,7 +266,29 @@ class CloningPage(QWidget):
         if name:
             self._insert_name = name
         self._features = list(features or ())
+        self._show_record()
         self.recompute()
+
+    def _show_record(self) -> None:
+        """Record names the insert, also when it came from the open sequence
+        and not from a file picked here."""
+        combo = self.record_combo
+        if not self._insert:
+            return
+        for i in range(combo.count()):
+            data = combo.itemData(i)
+            if data and data[0] == self._insert_name and data[1].upper() == self._insert:
+                if combo.currentIndex() != i:
+                    combo.blockSignals(True)
+                    combo.setCurrentIndex(i)
+                    combo.blockSignals(False)
+                return
+        combo.blockSignals(True)
+        combo.clear()
+        combo.addItem(f"{self._insert_name} ({len(self._insert):,} bp)",
+                      (self._insert_name, self._insert))
+        combo.blockSignals(False)
+        combo.setToolTip(combo.currentText())
 
     def _on_pick_insert(self) -> None:
         path = self.insert_path.path()

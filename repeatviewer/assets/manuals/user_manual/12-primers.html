@@ -7,7 +7,7 @@
 <header class="topbar"><a class="brand" href="index.html">RepeatViewer <span>User Manual 1.1.0</span></a>
 <input id="search" type="search" placeholder="Search the manual" autocomplete="off">
 <a class="pdf" href="RepeatViewer_User_Manual.pdf">PDF</a></header>
-<div class="layout"><aside class="sidebar"><ol class="toc"><li><a href="01-introduction.html"><span class="num">1</span>Introduction</a></li><li><a href="02-installation.html"><span class="num">2</span>Installation</a></li><li><a href="03-quick-start.html"><span class="num">3</span>Quick start: one curation pass</a></li><li><a href="04-interface.html"><span class="num">4</span>The interface</a></li><li><a href="05-sequences.html"><span class="num">5</span>Sequences</a></li><li><a href="06-annotations.html"><span class="num">6</span>Annotations</a></li><li><a href="07-search.html"><span class="num">7</span>Search</a></li><li><a href="08-alignments.html"><span class="num">8</span>Alignments</a></li><li><a href="09-mapping.html"><span class="num">9</span>Mapping</a></li><li><a href="10-trees.html"><span class="num">10</span>Trees</a></li><li><a href="11-repeat-analysis.html"><span class="num">11</span>Repeat analysis</a></li><li class="current"><a href="12-primers.html"><span class="num">12</span>Primers and PCR</a><ul><li><a href="#quick-start">12.1 Quick start</a></li><li><a href="#design">12.2 Design</a></li><li><a href="#primers-on-the-sequence">12.3 Primers on the sequence</a></li><li><a href="#in-silico-pcr">12.4 In-silico PCR</a></li><li><a href="#the-gel">12.5 The gel</a></li><li><a href="#map-test-primers-on-sequences">12.6 Map: test primers on sequences</a></li><li><a href="#database-the-labs-primer-inventory">12.7 Database: the lab&#x27;s primer inventory</a></li><li><a href="#chromosome-painting-chorus2">12.8 Chromosome painting (Chorus2)</a></li><li><a href="#how-it-works">12.9 How it works</a></li></ul></li><li><a href="13-automation.html"><span class="num">13</span>Automation</a></li><li><a href="14-settings.html"><span class="num">14</span>Settings</a></li><li><a href="15-reference.html"><span class="num">15</span>Reference</a></li></ol></aside>
+<div class="layout"><aside class="sidebar"><ol class="toc"><li><a href="01-introduction.html"><span class="num">1</span>Introduction</a></li><li><a href="02-installation.html"><span class="num">2</span>Installation</a></li><li><a href="03-quick-start.html"><span class="num">3</span>Quick start: one curation pass</a></li><li><a href="04-interface.html"><span class="num">4</span>The interface</a></li><li><a href="05-sequences.html"><span class="num">5</span>Sequences</a></li><li><a href="06-annotations.html"><span class="num">6</span>Annotations</a></li><li><a href="07-search.html"><span class="num">7</span>Search</a></li><li><a href="08-alignments.html"><span class="num">8</span>Alignments</a></li><li><a href="09-mapping.html"><span class="num">9</span>Mapping</a></li><li><a href="10-trees.html"><span class="num">10</span>Trees</a></li><li><a href="11-repeat-analysis.html"><span class="num">11</span>Repeat analysis</a></li><li class="current"><a href="12-primers.html"><span class="num">12</span>Primers and PCR</a><ul><li><a href="#quick-start">12.1 Quick start</a></li><li><a href="#the-workspace">12.2 The workspace</a></li><li><a href="#design">12.3 Design</a></li><li><a href="#design-on-the-sequence">12.4 Design on the sequence</a></li><li><a href="#primers-on-the-sequence">12.5 Primers on the sequence</a></li><li><a href="#in-silico-pcr">12.6 In-silico PCR</a></li><li><a href="#restriction-digest">12.7 Restriction digest</a></li><li><a href="#the-gel">12.8 The gel</a></li><li><a href="#map-test-primers-on-sequences">12.9 Map: test primers on sequences</a></li><li><a href="#database-the-labs-primer-inventory">12.10 Database: the lab&#x27;s primer inventory</a></li><li><a href="#chromosome-painting-chorus2">12.11 Chromosome painting (Chorus2)</a></li><li><a href="#sanger-check">12.12 Sanger Check</a></li><li><a href="#cloning">12.13 Cloning</a></li><li><a href="#how-it-works">12.14 How it works</a></li></ul></li><li><a href="13-automation.html"><span class="num">13</span>Automation</a></li><li><a href="14-settings.html"><span class="num">14</span>Settings</a></li><li><a href="15-reference.html"><span class="num">15</span>Reference</a></li></ol></aside>
 <main id="content"><div id="results" hidden></div><h1 id="primers-and-pcr" class="chapter-title"><span class="chapter-label">Chapter 12</span>Primers and PCR</h1>
 <p>RepeatViewer designs PCR primers and FISH probes for repeats, shows primers on
 the sequence, runs in-silico PCR, draws the expected gel, and keeps the lab's
@@ -22,48 +22,79 @@ primer inventory. Everything runs on your computer; nothing is sent online.</p>
 <tbody>
 <tr>
 <td><strong>Tools → Primers and Probes → Design</strong></td>
-<td>Design primers or FISH probes</td>
+<td>Design primers (<strong>Primers</strong>), FISH probes for a repeat (<strong>Repetitive Probes</strong>) or painting probes (<strong>Chromosome Painting Probes</strong>)</td>
 </tr>
 <tr>
 <td><strong>Tools → Primers and Probes → Map</strong></td>
-<td>Test primers against sequences, like Geneious' <em>Map Primers</em></td>
+<td>Test primers or probes against sequences, like Geneious' <em>Map Primers</em></td>
 </tr>
 <tr>
 <td><strong>Tools → Primers and Probes → Database</strong></td>
 <td>The lab's primer inventory</td>
 </tr>
 <tr>
-<td><strong>Tools → Primers and Probes → In-silico PCR</strong></td>
-<td>The PCR window</td>
+<td><strong>Tools → Primers and Probes → In-silico PCR</strong>, <strong>Restriction Digest</strong>, <strong>Gel</strong></td>
+<td>The products of a PCR, a digest of the sequence, the expected gel</td>
 </tr>
 <tr>
-<td><strong>Primers</strong> tab of the sequence side panel</td>
-<td>Primers on the open sequence</td>
+<td><strong>Tools → Primers and Probes → Sanger Check</strong>, <strong>Cloning</strong></td>
+<td>Check a clone against its Sanger reads; plan putting a product into a vector</td>
 </tr>
 </tbody>
 </table>
+<p>Every item opens the same tab, <strong>Primers and Probes</strong>, on the matching section.</p>
 <p>The toolbar can also show a <strong>Primers and Probes</strong> button (<strong>File → Setting →
-Toolbar → Add buttons…</strong>). It offers Design, Map and Database; right-click
-designs with the saved settings, or opens the Design window (choose on its
-<strong>Options</strong> tab).</p>
+Toolbar → Add buttons…</strong>). It offers the same items; right-click designs with
+the saved settings.</p>
 <h2 id="quick-start"><span class="secnum">12.1</span>Quick start</h2>
 <ol>
 <li>Click the FASTA you want primers for in the Files panel.</li>
-<li>Choose <strong>Tools → Primers and Probes → Design</strong>.</li>
-<li>Under <strong>Settings</strong>, choose the <strong>Mode</strong> (keep <em>Standard PCR</em> for an ordinary
-   pair) and click <strong>Run</strong>.</li>
-<li>The report <code>&lt;name&gt;_primers.html</code> opens. If <strong>Ask which pairs to add to the
-   sequence after the run</strong> is on, tick the pairs you want and click <strong>Add to
-   Sequence</strong>; they then appear in the sequence's <strong>Primers</strong> tab.</li>
-<li>Tick two primers in the <strong>Primers</strong> tab and click <strong>Run PCR</strong> to see their
-   products and the gel.</li>
+<li>Choose <strong>Tools → Primers and Probes → Design → Primers</strong>. The <strong>Primers and
+   Probes</strong> tab opens on the <strong>Design</strong> section, with your sequence.</li>
+<li>Drag on the map over the part to amplify, keep <strong>Mode</strong> on <em>Standard PCR</em>
+   and click <strong>Design</strong>.</li>
+<li>The candidate pairs appear in the list under the map and as arrows above the
+   sequence. Tick the pairs you want and click <strong>Keep Ticked</strong>: their primers
+   are now on the sequence.</li>
+<li>Click the <strong>PCR</strong> section to see the products of the ticked primers and the
+   expected gel.</li>
 </ol>
-<h2 id="design"><span class="secnum">12.2</span>Design</h2>
-<figure id="fig-12-1"><img src="img/primer_design.png" alt="The Design window." width="700" loading="lazy"><figcaption><b>Figure 12.1.</b> The Design window.</figcaption></figure>
-<p>The window has the tabs <strong>Primers</strong> and <strong>Options</strong>.</p>
-<p><strong>Inputs</strong>: <strong>Use selected sequences</strong> (the FASTA selected in the Files panel;
-its name is shown) or <strong>Define inputs</strong> (a template FASTA for this run). Every
-sequence in the template file is used, up to 20.</p>
+<h2 id="the-workspace"><span class="secnum">12.2</span>The workspace</h2>
+<p><strong>Primers and Probes</strong> is one tab. The row on top holds its sections: <strong>Design</strong>,
+<strong>Painting</strong>, <strong>Map</strong>, <strong>Database</strong>, <strong>PCR</strong>, <strong>Digest</strong>, <strong>Gel</strong>, <strong>Sanger
+Check</strong> and <strong>Cloning</strong>. A section keeps what you did in it while you look at
+another one.</p>
+<figure id="fig-12-1"><img src="img/pp_design.png" alt="The Primers and Probes workspace on the Design section: the map, the list under it and the settings in the panel on the right." width="994" loading="lazy"><figcaption><b>Figure 12.1.</b> The Primers and Probes workspace on the Design section: the map, the list under it and the settings in the panel on the right.</figcaption></figure>
+<p><strong>Design</strong>, <strong>PCR</strong> and <strong>Digest</strong> work on one sequence:</p>
+<ul>
+<li>Click a FASTA's name in the Files panel to work on it. Ticking a file's box
+  does not change it. For a file that holds several sequences, <strong>Record</strong> in
+  the Position row chooses the one to work on.</li>
+<li>The <strong>map</strong> shows the sequence. What a section adds is drawn in rows of its
+  own above the bases, so no letter is covered: enzyme names, one row for each
+  candidate pair, and the primer you are editing. A region you chose is a light
+  tint behind them.</li>
+<li>The <strong>list under the map</strong> holds what Design found (<em>candidate</em>) and the
+  primers already on the sequence (<em>on the sequence</em>); in <strong>PCR</strong> it holds the
+  products. Drag the border between the map and the list to give one of them
+  more room.</li>
+<li>The <strong>panel on the right</strong> holds the settings of the section.</li>
+</ul>
+<p>The other sections are whole pages of their own. <strong>Map</strong> and <strong>Database</strong> open
+without a sequence.</p>
+<blockquote class="note">
+<p><strong>Tip.</strong> A path field in the panel (for example <em>Avoid file</em>) is filled by a
+click in the Files panel: put the cursor in the field first, then click the
+file. To open a file in a tab of its own while the workspace is in front,
+right-click it and choose <strong>Open in Additional Tab</strong>.</p>
+</blockquote>
+<h2 id="design"><span class="secnum">12.3</span>Design</h2>
+<p>The settings are in the panel on the right of the <strong>Design</strong> section.</p>
+<p><strong>Run on</strong>: <strong>Open sequence</strong> designs on the open sequence. The candidates appear in
+the list under the map and nothing is written until you press <strong>Keep Ticked</strong>
+or <strong>Open Report</strong>. <strong>Selected files</strong> runs the design as a job on every FASTA
+ticked in the Files panel and writes the report files beside them, with the
+same settings.</p>
 <p><strong>Mode</strong> is the kind of design. Changing it loads sensible starting values
 (size, Tm, product size); <strong>Restore Defaults</strong> brings them back.</p>
 <table>
@@ -97,8 +128,8 @@ sequence in the template file is used, up to 20.</p>
 <tr>
 <td>Satellite repeat oligos</td>
 <td>FISH probes for a satellite or repeat family</td>
-<td>Monomers or copies</td>
-<td>30 to 45 nt oligos present in at least <em>Min coverage</em> of the copies, without hairpins, ready to order with a 5′ label (FAM, Cy3, Cy5 …)</td>
+<td>Monomers or copies, or a TAREAN dimer consensus</td>
+<td>35 to 60 nt oligos present in at least <em>Min coverage</em> of the copies, without hairpins, with a Tm for your hybridisation conditions, ready to order with a 5′ label (FAM, Cy3, Cy5 …)</td>
 </tr>
 <tr>
 <td>Chromosome painting (Chorus2)</td>
@@ -109,7 +140,51 @@ sequence in the template file is used, up to 20.</p>
 </tbody>
 </table>
 <p>For ladder PCR and FISH oligos, use many monomers (for example extracted from an
-array) rather than one: the tool then keeps the parts shared by most copies.</p>
+array) rather than one: the tool then keeps the parts shared by most copies. A
+dimer consensus (TAREAN's <code>consensus_dimer.fasta</code>, the monomer written twice) is
+recognised and cut back to one monomer.</p>
+<p><strong>Satellite repeat oligos</strong> have their own settings:</p>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Avoid the other selected files</td>
+<td>Select the target family first, then the other families (one FASTA each). Probes are designed on the first file and every probe that matches the others is ranked last; the report names the sequences it matches</td>
+</tr>
+<tr>
+<td>Leave out low-complexity and inverted repeats</td>
+<td>Low-complexity stretches (DUST, as <code>dustmasker -level 30</code>), simple repeats and inverted repeats (arms of 12 nt or more, as EMBOSS <code>einverted</code>) are found first and no probe may touch them; the report lists them</td>
+</tr>
+<tr>
+<td>Hybridisation</td>
+<td>Formamide, SSC and temperature of the hybridisation (default 50 % formamide, 2× SSC, 37 °C)</td>
+</tr>
+<tr>
+<td>Stringent wash</td>
+<td>The same for the stringent wash (default 20 % formamide, 0.1× SSC, 42 °C); probes that would melt off in it are not offered</td>
+</tr>
+<tr>
+<td>Probe</td>
+<td>Probe concentration in the mix (default 100 nM)</td>
+</tr>
+</tbody>
+</table>
+<p>For these probes <strong>Tm</strong> is the Tm under the hybridisation conditions, not in a
+PCR buffer: SantaLucia (1998) nearest-neighbour values with the Owczarzy et al.
+(2004) Na⁺ correction (1× SSC = 195 mM Na⁺), minus 0.60 °C per % formamide
+(Hutton 1977). The default window (48 to 58 °C, about 52 °C for 50 to 60 nt)
+follows the TAREAN probe design protocol. The report gives each probe's Tm in
+the wash and how far it stays above the wash temperature.</p>
+<blockquote class="note">
+<p><strong>Tip.</strong> Never use a PCR product amplified from genomic DNA as a hybridisation
+probe, even with one band of the expected size: clone and sequence it first,
+and keep short simple repeats in the clone out of the probe.</p>
+</blockquote>
 <p><strong>Primer Conditions</strong>:</p>
 <table>
 <thead>
@@ -148,9 +223,9 @@ array) rather than one: the tool then keeps the parts shared by most copies.</p>
 <p><strong>Advanced Settings ▸</strong> adds poly-X, GC clamp, 3′ stability, probe size and Tm,
 5′ tails (M13, T7, restriction sites, or your own) and the Tm calculation (salt,
 Mg²⁺, dNTP and oligo concentration).</p>
-<p><strong>Options</strong>: what right-click on the toolbar button does; <strong>Ask which pairs to
-add to the sequence after the run</strong>; <strong>Add the designed primers to the Primer
-Database</strong>; the process window.</p>
+<p><strong>Options</strong>: <strong>Ask which pairs to add here</strong> (for a run on selected files);
+<strong>Add them to the Database</strong>. <strong>Restore Defaults</strong> brings the starting values
+of the mode back, <strong>Save</strong> keeps the settings for the next time.</p>
 <h3 id="design-results">Design results</h3>
 <p>Next to the input:</p>
 <pre><code>gene.fa_primers.html              the report (opens in Preview)
@@ -165,21 +240,61 @@ the virtual gel and a <strong>Methods text</strong> paragraph for a paper. When 
 found it explains why (for example how many primers failed on Tm or GC). Common
 fixes: widen the Tm range or the product size; for satellite oligos lower <em>Min
 coverage</em> or allow more mismatches.</p>
-<h2 id="primers-on-the-sequence"><span class="secnum">12.3</span>Primers on the sequence</h2>
-<p>The <strong>Primers</strong> tab of the sequence side panel lists the primers kept with this
-FASTA. Each is drawn on the sequence as an arrow where it binds (blue: points
-right; orange: points left); mismatches are red on the bases.</p>
-<figure id="fig-12-2"><img src="img/rail_primers.png" alt="The Primers tab: three primers on the demo element, with the numbers of the selected one." width="994" loading="lazy"><figcaption><b>Figure 12.2.</b> The Primers tab: three primers on the demo element, with the numbers of the selected one.</figcaption></figure>
+<h2 id="design-on-the-sequence"><span class="secnum">12.4</span>Design on the sequence</h2>
+<ol>
+<li><strong>Region</strong>: drag on the map or the bases; the range appears in <em>From</em> and
+   <em>to</em> (or type it). Choose what the region is for:
+   - <strong>Amplify</strong>: the primers sit outside the region, one on each side, and the
+     product covers all of it.
+   - <strong>Inside</strong>: both primers and the product stay inside the region.
+   - <strong>Avoid</strong>: no primer may sit in the region (a SNP, a methylated site, a
+     repeat).</li>
+</ol>
+<p>For probes only <strong>Inside</strong> and <strong>Avoid</strong> are offered: a probe sits in the
+   region or keeps out of it.
+2. <strong>Settings</strong>: the mode, primer size, Tm, GC and product size; <strong>Advanced</strong>
+   has the finer rules and the salt.
+3. <strong>Design</strong>: the pairs appear in the list under the map, best first, and
+   each pair gets a row of arrows above the sequence (the selected pair is
+   filled, the others are outlined). Click a pair to see it; tick the ones you
+   want and press <strong>Keep Ticked</strong>. They are added to this sequence's primers.
+   Nothing is written before that. <strong>Open Report</strong> writes the usual primer
+   report.</p>
+<p>When the region and the settings cannot work together (for example a 1,500 bp
+region to amplify with products of at most 1,000 bp), an amber note says why
+before you run, and <strong>Fit</strong> changes the product range. Nothing is blocked: the
+settings guide the automatic design, your choice wins.</p>
+<h2 id="primers-on-the-sequence"><span class="secnum">12.5</span>Primers on the sequence</h2>
+<p>The list under the map shows the primers kept with this FASTA as <em>on the
+sequence</em>. Each is drawn as an arrow where it binds (blue: points right;
+orange: points left).</p>
 <ul>
-<li><strong>Add Primer…</strong> types a new one, <strong>From Database…</strong> picks saved ones,
-  <strong>Design…</strong> opens Design for this sequence.</li>
-<li><strong>Click</strong> a primer to see its numbers and jump to it: Tm, hairpin and
-  self-dimer ΔG, where and how well it binds. <strong>Double-click</strong> opens <strong>Edit
-  Primer</strong>.</li>
+<li><strong>Add Primer</strong> types a new one, <strong>From Database</strong> picks saved ones.</li>
+<li><strong>From Selection</strong> makes a primer from bases on the sequence: drag over 10 to
+  60 bases on the map, then choose <strong>Forward Primer</strong> (the bases as they are)
+  or <strong>Reverse Primer</strong> (their reverse complement). The primer appears on the
+  sequence and can be dragged or edited like any other. When the selection
+  does not fit, the note by the list says why.</li>
+<li><strong>Click</strong> a primer to see its details in the panel on the right and jump to
+  it: Tm, hairpin and self-dimer ΔG, where and how well it binds. While a
+  primer is selected the design settings are folded to one line, <strong>Design
+  Settings</strong>; <strong>Show</strong> opens them again. Clicking a candidate also brings them
+  back.</li>
+<li>The details sum up the dimers with the other ticked primers in one line
+  (for example <em>Dimers: 6 checked, all ok</em>) and list only the pairs to look
+  at. <strong>Show All</strong> lists every pair, <strong>Hide</strong> folds the good ones away again.
+  Hover the list to read the full primer names.</li>
+<li>The selected primer is drawn as a bar in its own row right above its bases.
+  <strong>Drag</strong> the bar to move the primer, or drag one of its ends to make it
+  longer or shorter. A base that does not match the template is red on the
+  primer.</li>
 <li><strong>Snap to Tm</strong> shortens or lengthens the primer along the template to reach a
   Tm; <strong>Fix Mismatches to Match Template</strong> makes it match this sequence;
-  <strong>Sites in Genome…</strong> shows where it binds in a genome.</li>
-<li><strong>Tick</strong> two primers and click <strong>Run PCR</strong> to see their products.</li>
+  <strong>Edit Primer</strong> opens the primer with its tail and checks; <strong>Sites in Genome</strong>
+  shows where it binds in a genome.</li>
+<li><strong>Right-click</strong> a primer in the list to edit it, copy its sequence, add it to
+  the Primer Database or remove it.</li>
+<li>The <strong>tick</strong> marks the primers that the <strong>PCR</strong> section uses.</li>
 </ul>
 <p>A <strong>tail</strong> is the 5′ part that does not bind (lower-case letters). It is copied
 into the product from cycle 3 on, so two Tm values are shown: <strong>annealed</strong> (the
@@ -190,68 +305,66 @@ either end shorter or longer along the template; <strong>5′ tail</strong> adds
 site (with padding bases so the enzyme cuts), a sequencing or promoter tail, or
 your own; and the dimer and hairpin checks give ΔG at 37 °C (below −9 kcal/mol
 for dimers or −3 for hairpins is a warning).</p>
+<p><strong>Sites in Genome</strong>: each genome sequence drawn on one scale, forward sites as
+ticks above the bar, reverse sites below (darker = fewer mismatches), and for
+a qPCR pair the number of products per haploid genome, the value to expect in a
+copy-number assay.</p>
+<figure id="fig-12-2"><img src="img/pp_primer.png" alt="A primer selected on the sequence: its bar above the bases and its details in the panel." width="994" loading="lazy"><figcaption><b>Figure 12.2.</b> A primer selected on the sequence: its bar above the bases and its details in the panel.</figcaption></figure>
 <p>Primers are saved in a hidden <code>name.primers_RV.json</code> next to the FASTA and
 follow it when it is renamed or moved.</p>
-<h2 id="in-silico-pcr"><span class="secnum">12.4</span>In-silico PCR</h2>
-<p><strong>Tools → Primers and Probes → In-silico PCR</strong>, or <strong>Run PCR</strong> in the Primers
-tab.</p>
-<figure id="fig-12-3"><img src="img/pcr.png" alt="The PCR window: templates and primers on the left, products in the middle, a quick gel on the right." width="1280" loading="lazy"><figcaption><b>Figure 12.3.</b> The PCR window: templates and primers on the left, products in the middle, a quick gel on the right.</figcaption></figure>
-<ul>
-<li><strong>Templates</strong>: click FASTA files in the Files panel to add them (a whole
-  genome works). Each template is one lane.</li>
-<li><strong>Primers</strong>: from a sequence's Primers tab, <strong>From Database…</strong>, or
-  <strong>Paste…</strong>. All combinations are tested, as in a real tube, including one
-  primer at both ends.</li>
-<li><strong>Kind of PCR</strong>:</li>
-<li><strong>Standard</strong>: every product.</li>
-<li><strong>Satellite ladder</strong>: products that step by a common size are labelled 1×,
-    2×, 3× (the monomer of a tandem repeat).</li>
-<li><strong>Bisulfite / MSP</strong>: templates converted as methylated and as unmethylated
-    DNA (plants: CG and CHG stay C when methylated).</li>
-<li><strong>TE present / absent</strong>: one lane per accession.</li>
-<li><strong>Mismatches per primer</strong> and <strong>3′ end exact</strong> decide which sites count;
-  <strong>Longest product</strong>, <strong>Polymerase</strong> and <strong>Annealing</strong> set the reaction.</li>
-</ul>
-<p>The products table lists each product with its size, where it is and the
-mismatches of each primer; <strong>Expected yield</strong> is relative (fewer mismatches,
-shorter products and repeated sites give more DNA). The strip above the table
-shows the product you click: the forward primer (blue), the reverse primer
-(orange) and the stretch between. Small arrows are other places the primers
-bind. <strong>Zoom to Product</strong> and <strong>Show All Products</strong> frame the strip; <strong>Copy
-Product Sequence</strong> copies it.</p>
-<p>Buttons at the bottom:</p>
+<h2 id="in-silico-pcr"><span class="secnum">12.6</span>In-silico PCR</h2>
+<p><strong>Tools → Primers and Probes → In-silico PCR</strong>, or the <strong>PCR</strong> section of the
+workspace. The products are listed under the map and drawn in the expected gel
+in the panel. There is no Run button: the products update by themselves when
+you change anything.</p>
+<figure id="fig-12-3"><img src="img/pcr.png" alt="The PCR section: the products under the map, and the primers, the expected gel and the options in the panel." width="994" loading="lazy"><figcaption><b>Figure 12.3.</b> The PCR section: the products under the map, and the primers, the expected gel and the options in the panel.</figcaption></figure>
+<p>The panel, from top to bottom:</p>
 <table>
 <thead>
 <tr>
-<th>Button</th>
-<th>Opens</th>
+<th>Section</th>
+<th>What it holds</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><strong>Gel</strong></td>
-<td>The full gel document (below)</td>
+<td><strong>Run on</strong></td>
+<td><strong>Input</strong>: <em>Open sequence</em> (the sequence in the map, live) or <em>Selected files</em> (every FASTA ticked in the Files panel, so one pair can be tested on many satellite families at once; the products of all files are listed together, each with its file)</td>
 </tr>
 <tr>
-<td><strong>Products File</strong></td>
-<td>The products FASTA, with primers and the template's annotations</td>
+<td><strong>Primers</strong></td>
+<td><strong>Forward</strong> and <strong>Reverse</strong>: primers on this sequence. <strong>From Database</strong> puts saved primers on the sequence so they can be chosen. <strong>Kind</strong>, <strong>Mismatches</strong>, <strong>3′ end exact</strong> and <strong>Polymerase</strong> set the reaction</td>
 </tr>
 <tr>
-<td><strong>Table</strong></td>
-<td>The products table</td>
+<td><strong>Products</strong></td>
+<td>Every product the two primers make, best first: <strong>Range</strong>, <strong>Size</strong> and <strong>mm F / R</strong> (mismatches of the forward and the reverse primer at that site). Click a product to see it on the sequence</td>
 </tr>
 <tr>
-<td><strong>Bench Card</strong></td>
-<td>Mastermix volumes and the cycling program for the bench</td>
+<td><strong>Expected gel</strong></td>
+<td>The products next to a size ladder</td>
 </tr>
 <tr>
-<td><strong>Sites in Genome</strong></td>
-<td>Every binding site of each primer in a genome</td>
+<td><strong>Options</strong></td>
+<td><strong>Open in a Gel</strong>, <strong>Bench Card</strong>, <strong>Save Products</strong></td>
 </tr>
 </tbody>
 </table>
-<p><strong>Outputs</strong>, next to the first template: <code>&lt;template&gt;_PCR_&lt;primers&gt;.fa</code> (the
-products) and <code>…_details/</code> (<code>_products.tsv</code>, <code>_history.json</code>,
+<ul>
+<li><strong>Kind</strong>: <em>Standard</em> lists every product. <em>Satellite ladder</em> groups the
+  products that step by a monomer and labels them 1×, 2×, 3×.</li>
+<li><strong>Mismatches</strong> (none, or up to 1 to 4 per primer) and <strong>3′ end exact</strong> (no
+  rule, or the last 2 to 5 bases) decide which sites count. <strong>Polymerase</strong> sets
+  how fast long products fall off.</li>
+<li>The <strong>status box</strong> under the primers says what to expect. Green: <em>Ready for
+  PCR</em>, with the expected product size. Amber: the expected product is longer
+  or shorter than the product range set in Design. That is allowed (the tube
+  still makes it); <strong>Set Range to … bp</strong> changes the range in Design to fit.
+  <em>No product</em> means the two primers do not face each other on this sequence.</li>
+</ul>
+<p><strong>Open in a Gel</strong> makes a gel document from this PCR, next to the sequence,
+that you can change (lanes, agarose, ladder; see <a href="12-primers.html#the-gel">The gel</a>).</p>
+<p><strong>Save Products</strong> writes, next to the sequence, <code>&lt;template&gt;_PCR_&lt;primers&gt;.fa</code>
+(the products) and <code>…_details/</code> (<code>_products.tsv</code>, <code>_history.json</code>,
 <code>_result.json</code>). The products file opens like any multi-FASTA, with the primer
 sites and the template's features on each product.</p>
 <figure id="fig-12-4"><img src="img/pcr_products.png" alt="The products of a satellite ladder PCR: 1×, 2×, 3× … monomers, with the primers and the monomer annotations carried over." width="994" loading="lazy"><figcaption><b>Figure 12.4.</b> The products of a satellite ladder PCR: 1×, 2×, 3× … monomers, with the primers and the monomer annotations carried over.</figcaption></figure>
@@ -260,15 +373,93 @@ added to each tube); annealing from the lower primer Tm (Taq 3 °C below,
 Phusion or Q5 3 °C above); extension from the longest product wanted (Taq
 1 min per kb, Phusion or Q5 20 s per kb); freezer places from the Primer
 Database. Change the numbers on the right, then <strong>Save PDF</strong> or <strong>Print</strong>.</p>
-<p><strong>Sites in Genome</strong>: each genome sequence drawn on one scale, forward sites as
-ticks above the bar, reverse sites below (darker = fewer mismatches), and for
-a qPCR pair the number of products per haploid genome, the value to expect in a
-copy-number assay.</p>
-<h2 id="the-gel"><span class="secnum">12.5</span>The gel</h2>
-<p>A <code>.rvgel</code> file opens as an agarose gel. Every lane is a ladder, the products of
-a PCR run, or products cut with a restriction enzyme. The gel is saved as it
-changes.</p>
-<figure id="fig-12-5"><img src="img/gel.png" alt="The in-silico gel of a satellite ladder PCR: GeneRuler 1 kb Plus next to the 1×, 2×, 3× … products." width="994" loading="lazy"><figcaption><b>Figure 12.5.</b> The in-silico gel of a satellite ladder PCR: GeneRuler 1 kb Plus next to the 1×, 2×, 3× … products.</figcaption></figure>
+<h2 id="restriction-digest"><span class="secnum">12.7</span>Restriction digest</h2>
+<p><strong>Tools → Primers and Probes → Restriction Digest</strong>, or the <strong>Digest</strong> section
+of the workspace. The enzymes that cut the sequence are named in a row above
+the bases on the map and listed in the panel.</p>
+<figure id="fig-12-5"><img src="img/digest_enzymes.png" alt="The Digest section: enzyme sites on the map and the list of enzymes in the panel." width="994" loading="lazy"><figcaption><b>Figure 12.5.</b> The Digest section: enzyme sites on the map and the list of enzymes in the panel.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Enzyme set</strong></td>
+<td><strong>Set</strong>: which enzymes to look at. <em>Methylation-sensitive</em> holds the enzymes with known CG or CHG sensitivity (HpaII and MspI as a pair). <strong>Show</strong>: enzymes that cut this often are ticked and drawn on the sequence</td>
+</tr>
+<tr>
+<td><strong>Methylation</strong></td>
+<td><strong>Data</strong>: a Bismark <code>.cov</code> or modkit <code>bedMethyl</code> file. <strong>Methylated ≥</strong> and <strong>Reads ≥</strong>: a site counts as blocked when a cytosine of the site is methylated at least this much, with at least this many reads, in a context that blocks the enzyme</td>
+</tr>
+<tr>
+<td><strong>Enzymes</strong></td>
+<td>The list: <strong>Enzyme</strong>, <strong>Site</strong>, <strong>Cuts</strong> (sites on this sequence) and <strong>In your data</strong> (sites probably not cut because of methylation in your file)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>Click an enzyme to go to its first site. Tick or untick any enzyme; only the
+  ticked ones are drawn and digested.</li>
+<li><strong>Select All</strong> ticks every enzyme in the list; press it again to untick them
+  all.</li>
+<li>With methylation data, the rows of the chromosome named like this sequence
+  are read (an extracted region named <em>chrom:start-end</em> is shifted to its own
+  positions). Blocked sites are drawn red and dashed: <em>probably not cut</em>.
+  Without data the map shows the labels only.</li>
+<li>The sensitivity of each enzyme (CG, CHG, Dam, Dcm) follows the Promega and
+  NEB tables and REBASE (McClelland et al. 1994). Dam and Dcm only matter for
+  DNA grown in <em>E. coli</em>.</li>
+</ul>
+<p><strong>Digest</strong> shows the ticked enzymes as a gel, and the panel changes to the
+result. <strong>Enzymes</strong> on top goes back to the list.</p>
+<figure id="fig-12-6"><img src="img/digest.png" alt="The result of a digest: one lane for each ticked enzyme, and the bands of the chosen lane." width="994" loading="lazy"><figcaption><b>Figure 12.6.</b> The result of a digest: one lane for each ticked enzyme, and the bands of the chosen lane.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Digest</strong></td>
+<td><strong>Lanes</strong>: one for each ticked enzyme; with methylation data, an enzyme with blocked sites gets a second lane without the data, to compare. <strong>Array</strong>: the repeat period, from monomer annotations (a name with three or more copies), otherwise estimated from the sequence. <strong>Site loss</strong> and <strong>Completeness</strong> (below)</td>
+</tr>
+<tr>
+<td><strong>Gel</strong></td>
+<td><strong>Agarose</strong> and <strong>Ladder</strong> (<em>Automatic</em> or one you choose). Brightness follows DNA mass; very many faint bands of nearby sizes run as a smear</td>
+</tr>
+<tr>
+<td><strong>Lane</strong></td>
+<td>The brightest bands of the chosen lane: <strong>Size</strong> (<em>n×</em> is n monomers) and <strong>Brightness</strong> (the share of the lane's DNA in that band)</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Site loss</strong>: <em>From the copies</em> uses the sites as they are in this sequence,
+  so copies that lost the site by mutation give the 2×, 3× … ladder. <em>A site in
+  every copy</em> adds the missing sites at the array period.</li>
+<li><strong>Completeness</strong>: the share of molecules cut at an open site. With
+  methylation data, each site is cut with completeness × (1 − share methylated
+  in a blocking context).</li>
+<li><strong>Open in a Gel</strong> writes a gel document you can change; <strong>Compare with Gel
+  Photo</strong> puts your real gel next to this one (see <a href="12-primers.html#the-gel">The gel</a>).</li>
+</ul>
+<h2 id="the-gel"><span class="secnum">12.8</span>The gel</h2>
+<p>A <code>.rvgel</code> file opens as an agarose gel, in the <strong>Gel</strong> section of the workspace
+(every <strong>Open in a Gel</strong> button, <strong>Tools → Primers and Probes → Gel</strong>, or a
+click on a gel in the Files panel while the workspace is in front). Every lane is a ladder, the products of
+a PCR run, or products cut with a restriction enzyme. A gel that is a file is
+saved as it changes.</p>
+<p>A new, empty gel (<strong>Tools → Primers and Probes → Gel</strong>) holds only a ladder and
+is not a file yet. <strong>Save → Gel</strong> writes it as a <code>.rvgel</code> in the current
+folder; from then on it saves itself like any gel. If you leave a new gel that
+you changed and did not save, RepeatViewer asks first: <strong>Save</strong>, <strong>Discard</strong>
+(throw it away) or <strong>Cancel</strong> (stay on the gel).</p>
+<figure id="fig-12-7"><img src="img/gel.png" alt="The in-silico gel of a satellite ladder PCR: GeneRuler 1 kb Plus next to the 1×, 2×, 3× … products." width="994" loading="lazy"><figcaption><b>Figure 12.7.</b> The in-silico gel of a satellite ladder PCR: GeneRuler 1 kb Plus next to the 1×, 2×, 3× … products.</figcaption></figure>
 <table>
 <thead>
 <tr>
@@ -309,19 +500,24 @@ changes.</p>
 <td><strong>Cut with</strong> (per lane)</td>
 <td>Digest the lane's products with a restriction enzyme</td>
 </tr>
+<tr>
+<td><strong>Save</strong></td>
+<td><strong>Gel</strong> (the <code>.rvgel</code> document), or the figure as SVG, PNG (300 dpi) or PDF</td>
+</tr>
 </tbody>
 </table>
 <p>Hover a band to see what it is, click to select it, double-click to open the
 products file.</p>
-<p><strong>Compare with Gel Photo…</strong> puts a picture of your real gel (PNG, JPG or TIFF)
+<p><strong>Compare with Gel Photo</strong> puts a picture of your real gel (PNG, JPG or TIFF)
 next to the in-silico one. Lanes and bands are found for you. Choose which
 photo lane holds the ladder (its bands give the size scale) and which gel lane
 each photo lane should match. Every band is then named: <strong>matched</strong> (within
 7 %), <strong>off-target</strong> (a predicted off-target product), <strong>unexplained</strong> (try the
 PCR with more mismatches), and expected bands <strong>not seen</strong>.</p>
-<h2 id="map-test-primers-on-sequences"><span class="secnum">12.6</span>Map: test primers on sequences</h2>
-<p><strong>Tools → Primers and Probes → Map</strong>. Tabs: <strong>Map Primers</strong> | <strong>Options</strong>.</p>
-<figure id="fig-12-6"><img src="img/primer_map.png" alt="The Map Primers window." width="700" loading="lazy"><figcaption><b>Figure 12.6.</b> The Map Primers window.</figcaption></figure>
+<h2 id="map-test-primers-on-sequences"><span class="secnum">12.9</span>Map: test primers on sequences</h2>
+<p><strong>Tools → Primers and Probes → Map → Primers</strong> (or <strong>Repetitive Probes</strong>). It
+opens as the <strong>Map</strong> section of the workspace, with its settings on the right.</p>
+<figure id="fig-12-8"><img src="img/primer_map.png" alt="The Map section." width="994" loading="lazy"><figcaption><b>Figure 12.8.</b> The Map section.</figcaption></figure>
 <ul>
 <li><strong>Inputs</strong> as in Design. <strong>Test primers on</strong>: every sequence, or the
   consensus of an alignment.</li>
@@ -337,19 +533,20 @@ PCR with more mismatches), and expected bands <strong>not seen</strong>.</p>
 </ul>
 <p><strong>Output:</strong> <code>&lt;name&gt;_primer_map.html</code> with binding sites, predicted products and
 a gel.</p>
-<h2 id="database-the-labs-primer-inventory"><span class="secnum">12.7</span>Database: the lab's primer inventory</h2>
+<h2 id="database-the-labs-primer-inventory"><span class="secnum">12.10</span>Database: the lab's primer inventory</h2>
 <p>The Database is the record of every primer the lab has: sequence and Tm, what it
 amplifies and in which organism, where the tube is, whether it is in stock and
 whether it worked, who ordered it and when, and every change since.</p>
-<figure id="fig-12-7"><img src="img/primer_database.png" alt="The Primer Database window." width="920" loading="lazy"><figcaption><b>Figure 12.7.</b> The Primer Database window.</figcaption></figure>
-<h3 id="the-window">The window</h3>
+<figure id="fig-12-9"><img src="img/primer_database.png" alt="The Database section." width="994" loading="lazy"><figcaption><b>Figure 12.9.</b> The Database section.</figcaption></figure>
+<p>It opens as the <strong>Database</strong> section of the workspace.</p>
+<h3 id="the-page">The page</h3>
 <ul>
 <li><strong>Filter</strong> searches every field; the boxes next to it show one organism, one
   person or one status.</li>
 <li>Select a primer to edit it below the table, then <strong>Save Changes</strong>. Select
   several to set a field on all of them at once (for example a new box, or
   <em>Used up</em>).</li>
-<li><strong>History…</strong> lists every change to the selected primer: who, when, what.</li>
+<li><strong>History</strong> lists every change to the selected primer: who, when, what.</li>
 <li><strong>Pair</strong> is found from the names (<code>_for</code>/<code>_rev</code>, <code>_fwd</code>/<code>_rev1</code>,
   <code>_FW</code>/<code>_RV</code>, <code>_F</code>/<code>_R</code>); write it in <em>Pairs with</em> when the names do not show
   it.</li>
@@ -362,8 +559,8 @@ whether it worked, who ordered it and when, and every change since.</p>
   <strong>Organisms</strong> and <strong>Targets</strong>.</li>
 <li><strong>Find Duplicates</strong>: the same sequence under two names, reverse complements,
   one primer inside another.</li>
-<li><strong>Export…</strong>: the whole table (TSV), a FASTA, or an order sheet.</li>
-<li><strong>Import…</strong>: a CSV, TSV or Excel sheet. The header row is found and known
+<li><strong>Export</strong>: the whole table (TSV), a FASTA, or an order sheet.</li>
+<li><strong>Import</strong>: a CSV, TSV or Excel sheet. The header row is found and known
   columns are read (name, sequence, organism, target, Tm, dissolved volume,
   ordered by, ordered on, box, freezer, room, status, tested, annealing,
   concentration, pair, note). Before importing it shows what is new, what is
@@ -390,7 +587,7 @@ never has to choose between two versions of a file and no change is lost. If
 two people change the same field of one primer, the later change wins.</p>
 <h3 id="check-a-new-sequence-against-the-stock">Check a new sequence against the stock</h3>
 <p>Before designing and ordering for a new plant, see what the lab already has:
-select the primers to test (none = all) and click <strong>Check a Sequence…</strong>. Give
+select the primers to test (none = all) and click <strong>Check a Sequence</strong>. Give
 the <strong>Sequence</strong> (click a FASTA in the Files panel) and how strict to be
 (product size; mismatches, by default up to 2 but with the last 3 bases at the
 3′ end matching). The report starts with <strong>From your Primer Database</strong>:</p>
@@ -401,9 +598,9 @@ the <strong>Sequence</strong> (click a FASTA in the Files panel) and how strict 
 <li><strong>Single primers that bind</strong>: no saved partner gives a product; one new
   partner is enough.</li>
 </ul>
-<h2 id="chromosome-painting-chorus2"><span class="secnum">12.8</span>Chromosome painting (Chorus2)</h2>
-<p>Choose <strong>Mode → FISH probes → Chromosome painting (Chorus2)</strong>. The tabs change
-to <strong>Chorus2</strong>, <strong>Selection</strong> and <strong>Options</strong>.
+<h2 id="chromosome-painting-chorus2"><span class="secnum">12.11</span>Chromosome painting (Chorus2)</h2>
+<p>Choose <strong>Tools → Primers and Probes → Design → Chromosome Painting Probes</strong>. It
+opens as the <strong>Painting</strong> section of the workspace.
 <a href="https://github.com/zhangtaolab/Chorus2">Chorus2</a> (Zhang et al. 2021) finds
 oligos that occur once in the genome along every chromosome. RepeatViewer runs
 it, or reads what it produced on a server, and then picks the pool you order.</p>
@@ -474,16 +671,111 @@ genome.fa_painting_details/
 oligos); use the order file. Too few probes for the pool size: lower the gap,
 widen the regions or the NGS score window, or rerun Chorus2 with a smaller
 k-mer step or a higher maximum homology.</p>
-<h2 id="how-it-works"><span class="secnum">12.9</span>How it works</h2>
+<h2 id="sanger-check"><span class="secnum">12.12</span>Sanger Check</h2>
+<p><strong>Tools → Primers and Probes → Sanger Check</strong> checks a clone against its Sanger
+reads: each read is trimmed by quality, aligned to the sequence the clone
+should carry, and every difference is shown with its chromatogram.</p>
+<figure id="fig-12-10"><img src="img/sanger_check.png" alt="The Sanger Check section: the reads, what they cover of the expected sequence, and the chromatogram around a difference." width="994" loading="lazy"><figcaption><b>Figure 12.10.</b> The Sanger Check section: the reads, what they cover of the expected sequence, and the chromatogram around a difference.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Expected</strong></td>
+<td><strong>Sequence</strong>: the sequence the clone should carry (click a FASTA in the Files panel, or Browse). <strong>Record</strong> chooses one when the file holds several</td>
+</tr>
+<tr>
+<td><strong>Reads</strong></td>
+<td><strong>Files</strong>: the <code>.ab1</code> files from sequencing (click them in the Files panel, or Browse). Plain <code>.seq</code> or FASTA reads work too, but without a chromatogram or quality. <strong>Clear</strong> takes all reads off the list. <strong>Save Reads as FASTA</strong> writes the good part of every read as a FASTA file beside it</td>
+</tr>
+<tr>
+<td><strong>Quality</strong></td>
+<td><strong>Trim cutoff</strong>: how strictly the ends are trimmed (Mott's rule, as phred uses). <strong>Real from Q</strong>: a difference below this quality is <em>doubtful</em> (the machine, not the clone)</td>
+</tr>
+<tr>
+<td><strong>Options</strong></td>
+<td><strong>Write a report beside the reads</strong> (an HTML page); <strong>Restore Defaults</strong>, <strong>Save</strong> (keep these settings) and <strong>Check</strong></td>
+</tr>
+</tbody>
+</table>
+<p>The expected sequence is optional. Without one, click an <code>.ab1</code> read to look at
+its chromatogram and quality, or save the reads as FASTA.</p>
+<p>With an expected sequence, each read is aligned in both directions:</p>
+<ul>
+<li>The <strong>table</strong> lists every read: <strong>Read</strong>, <strong>Direction</strong>, <strong>Covers</strong>,
+  <strong>Identity</strong>, <strong>Difference</strong> and <strong>Quality</strong>.</li>
+<li><strong>Coverage of the expected sequence</strong> shows which part each read covers and
+  where the differences are. Amber marks what no read reached: the clone is
+  only confirmed where a read went.</li>
+<li>Click a difference to see the <strong>chromatogram</strong> around it. The four dyes are
+  G black, A green, T red, C blue; the called base is on top, the expected one
+  underneath when they differ. A clean single peak with a high quality score is
+  a real difference in the clone; a double peak, a shoulder or a low score is a
+  poor call.</li>
+<li>The <strong>verdict</strong> under the boxes is green only when the reads cover every base
+  and nothing is left over.</li>
+</ul>
+<h2 id="cloning"><span class="secnum">12.13</span>Cloning</h2>
+<p><strong>Tools → Primers and Probes → Cloning</strong> plans putting a PCR product into a
+vector: the plasmid size in both orientations and the band a positive colony
+shows in colony PCR.</p>
+<figure id="fig-12-11"><img src="img/cloning.png" alt="The Cloning section: both orientations of the insert and the colony PCR gel." width="994" loading="lazy"><figcaption><b>Figure 12.11.</b> The Cloning section: both orientations of the insert and the colony PCR gel.</figcaption></figure>
+<table>
+<thead>
+<tr>
+<th>Section</th>
+<th>What it holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Insert</strong></td>
+<td><strong>Sequence</strong>: the PCR product, with the primer tails already on it (click a FASTA in the Files panel, or Browse). <strong>Record</strong> chooses one when the file holds several</td>
+</tr>
+<tr>
+<td><strong>Ligation</strong></td>
+<td><strong>Vector</strong>: pGEM-T Easy, pJET1.2/blunt or your own. <strong>Method</strong>: <em>TA</em> needs the 3′ A that Taq leaves; <em>Blunt</em> needs a proofreading product; <em>Restriction</em> uses the sites in the primer tails, and shows <strong>Enzymes</strong> for the two ends. <strong>Polymerase</strong></td>
+</tr>
+<tr>
+<td><strong>Your vector</strong></td>
+<td><strong>Length</strong> of the vector, and <strong>Empty PCR</strong>: the product your colony-PCR pair gives on the vector with no insert (the vector's map or manual says it)</td>
+</tr>
+<tr>
+<td><strong>Options</strong></td>
+<td><strong>Gel</strong> saves the colony PCR gel; <strong>Report</strong> saves a report of this cloning plan</td>
+</tr>
+</tbody>
+</table>
+<p>The table lists both orientations of the insert (<strong>Orientation</strong>, <strong>Insert</strong>,
+<strong>Plasmid</strong>, <strong>Colony PCR</strong>). A TA or blunt ligation gives both; two different
+enzymes give only the first. The colony PCR product is the empty-vector product
+plus the insert, so a colony with the insert runs that much higher than one
+without. With the empty-vector product given, the page also tells how far a
+sequencing read gets into the insert.</p>
+<blockquote class="note">
+<p><strong>Tip.</strong> No vector sequence ships with RepeatViewer, so every size here comes
+from the numbers you give, never from a guessed map.</p>
+</blockquote>
+<h2 id="how-it-works"><span class="secnum">12.14</span>How it works</h2>
 <p>Primer picking, Tm, and the hairpin and dimer checks use
 <a href="https://github.com/primer3-org/primer3">Primer3</a> (primer3-py). The
 binding-site search (Map, coverage on copies, genome counts) is RepeatViewer's
 own, on both strands: small inputs are scored at every position; on a genome,
 every version of each primer's 3′ end within the allowed mismatches is looked
 up, so the same sites are found. Ladder PCR and FISH oligos build on these.
+Ladder primers are picked on the dimer with Primer3's template mispriming check
+switched off, because every primer in a tandem repeat binds the template many
+times.
 Chromosome painting uses Chorus2 (MIT licence) in its own conda environment.</p>
 <p>References: Untergasser et al. (2012) <em>Nucleic Acids Research</em> 40:e115
-(Primer3). Zhang T, Liu G, Zhao H, Braz GT, Jiang J (2021) <em>Plant
+(Primer3). Owczarzy R et al. (2004) <em>Biochemistry</em> 43:3537–3554 (salt
+correction). Hutton JR (1977) <em>Nucleic Acids Research</em> 4:3537–3555 (formamide).
+Morgulis A et al. (2006) <em>Journal of Computational Biology</em> 13:1028–1040 (DUST).
+Zhang T, Liu G, Zhao H, Braz GT, Jiang J (2021) <em>Plant
 Biotechnology Journal</em> 19:1967–1978 (Chorus2).</p><nav class="pager"><a class="prev" href="11-repeat-analysis.html"><small>Previous</small>Repeat analysis</a><a class="next" href="13-automation.html"><small>Next</small>Automation</a></nav></main></div>
 <script src="search_index.js"></script><script src="manual.js"></script>
 </body></html>

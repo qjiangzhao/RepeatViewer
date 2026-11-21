@@ -7,7 +7,7 @@
 <header class="topbar"><a class="brand" href="index.html">RepeatViewer <span>User Manual 1.1.0</span></a>
 <input id="search" type="search" placeholder="Search the manual" autocomplete="off">
 <a class="pdf" href="RepeatViewer_User_Manual.pdf">PDF</a></header>
-<div class="layout"><aside class="sidebar"><ol class="toc"><li><a href="01-introduction.html"><span class="num">1</span>Introduction</a></li><li><a href="02-installation.html"><span class="num">2</span>Installation</a></li><li><a href="03-quick-start.html"><span class="num">3</span>Quick start: one curation pass</a></li><li><a href="04-interface.html"><span class="num">4</span>The interface</a></li><li><a href="05-sequences.html"><span class="num">5</span>Sequences</a></li><li class="current"><a href="06-annotations.html"><span class="num">6</span>Annotations</a><ul><li><a href="#where-annotations-are-stored">6.1 Where annotations are stored</a></li><li><a href="#the-annotation-tab">6.2 The Annotation tab</a></li><li><a href="#export">6.3 Export</a></li><li><a href="#sequence-annotation-many-files-at-once">6.4 Sequence Annotation (many files at once)</a></li><li><a href="#tsd-search">6.5 TSD Search</a></li></ul></li><li><a href="07-search.html"><span class="num">7</span>Search</a></li><li><a href="08-alignments.html"><span class="num">8</span>Alignments</a></li><li><a href="09-mapping.html"><span class="num">9</span>Mapping</a></li><li><a href="10-trees.html"><span class="num">10</span>Trees</a></li><li><a href="11-repeat-analysis.html"><span class="num">11</span>Repeat analysis</a></li><li><a href="12-primers.html"><span class="num">12</span>Primers and PCR</a></li><li><a href="13-automation.html"><span class="num">13</span>Automation</a></li><li><a href="14-settings.html"><span class="num">14</span>Settings</a></li><li><a href="15-reference.html"><span class="num">15</span>Reference</a></li></ol></aside>
+<div class="layout"><aside class="sidebar"><ol class="toc"><li><a href="01-introduction.html"><span class="num">1</span>Introduction</a></li><li><a href="02-installation.html"><span class="num">2</span>Installation</a></li><li><a href="03-quick-start.html"><span class="num">3</span>Quick start: one curation pass</a></li><li><a href="04-interface.html"><span class="num">4</span>The interface</a></li><li><a href="05-sequences.html"><span class="num">5</span>Sequences</a></li><li class="current"><a href="06-annotations.html"><span class="num">6</span>Annotations</a><ul><li><a href="#where-annotations-are-stored">6.1 Where annotations are stored</a></li><li><a href="#the-annotation-tab">6.2 The Annotation tab</a></li><li><a href="#export">6.3 Export</a></li><li><a href="#sequence-annotation-many-files-at-once">6.4 Sequence Annotation (many files at once)</a></li></ul></li><li><a href="07-search.html"><span class="num">7</span>Search</a></li><li><a href="08-alignments.html"><span class="num">8</span>Alignments</a></li><li><a href="09-mapping.html"><span class="num">9</span>Mapping</a></li><li><a href="10-trees.html"><span class="num">10</span>Trees</a></li><li><a href="11-repeat-analysis.html"><span class="num">11</span>Repeat analysis</a></li><li><a href="12-primers.html"><span class="num">12</span>Primers and PCR</a></li><li><a href="13-automation.html"><span class="num">13</span>Automation</a></li><li><a href="14-settings.html"><span class="num">14</span>Settings</a></li><li><a href="15-reference.html"><span class="num">15</span>Reference</a></li></ol></aside>
 <main id="content"><div id="results" hidden></div><h1 id="annotations" class="chapter-title"><span class="chapter-label">Chapter 6</span>Annotations</h1>
 <p>Annotations (features) are named regions of a sequence: LTRs, TIRs, TSDs,
 protein domains, ORFs, tandem repeats, primer sites, or anything you mark by
@@ -143,73 +143,16 @@ menu, all open the same window.</p>
 <p>The suggested file name follows the type: <code>name.fa_RV.gff3</code> for annotations,
 <code>name.fa_annotation.pdf</code> for figures.</p>
 <h2 id="sequence-annotation-many-files-at-once"><span class="secnum">6.4</span>Sequence Annotation (many files at once)</h2>
-<p><strong>Tools → Annotate → Sequence Annotation</strong> runs feature detection and
+<p><strong>Tools → Annotate</strong> runs feature detection and
 similarity annotation on all selected files in one go, writing the results into
 each file's annotations. Use it to annotate a whole library before you look at
 the elements one by one.</p>
 <figure id="fig-6-6"><img src="img/seq_annotation.png" alt="The Sequence Annotation window." width="608" loading="lazy"><figcaption><b>Figure 6.6.</b> The Sequence Annotation window.</figcaption></figure>
 <ul>
-<li><strong>Feature detection</strong>: the same types as in the side panel.</li>
+<li><strong>Feature detection</strong>: the same types as in the side panel (including TSD
+  search settings under Advanced).</li>
 <li><strong>Similarity annotation</strong>: the databases marked for annotation.</li>
 <li><strong>Threads</strong> and, under <strong>Advanced Settings</strong>, the detector parameters.</li>
-</ul>
-<h2 id="tsd-search"><span class="secnum">6.5</span>TSD Search</h2>
-<p><strong>Tools → Annotate → TSD Search</strong> looks for target site duplications in an
-alignment of genomic copies: short direct repeats just outside the element, one
-on each side. A TSD found in many copies is strong evidence that the boundaries
-are right.</p>
-<figure id="fig-6-7"><img src="img/tsd_search.png" alt="TSD Search settings." width="434" loading="lazy"><figcaption><b>Figure 6.7.</b> TSD Search settings.</figcaption></figure>
-<table>
-<thead>
-<tr>
-<th>Setting</th>
-<th>Default</th>
-<th>Meaning</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Boundary definition</td>
-<td>Auto detect</td>
-<td>Where the element starts and ends: found by boundary prediction, or set as alignment columns</td>
-</tr>
-<tr>
-<td>Search range around boundary</td>
-<td>100 bp</td>
-<td>How far outside each boundary to look</td>
-</tr>
-<tr>
-<td>Min / Max TSD length</td>
-<td>4 / 20 bp</td>
-<td>Lengths of TSD considered</td>
-</tr>
-<tr>
-<td>Min distance between TSDs</td>
-<td>200 bp</td>
-<td>The two copies must be at least this far apart</td>
-</tr>
-<tr>
-<td>Write .tsd_search.txt report</td>
-<td>off</td>
-<td>Also write a text report</td>
-</tr>
-<tr>
-<td>Max TSD similarity</td>
-<td>0.30</td>
-<td>Similarity ceiling used when comparing candidates</td>
-</tr>
-<tr>
-<td>Poly-N threshold</td>
-<td>0.95</td>
-<td>Ignore candidates in runs of N</td>
-</tr>
-<tr>
-<td>Cluster distance (eps)</td>
-<td>1.0</td>
-<td>Tolerance when grouping candidates from many copies</td>
-</tr>
-</tbody>
-</table>
-<p>The TSDs found are added as <code>TSD</code> features on the alignment.</p><nav class="pager"><a class="prev" href="05-sequences.html"><small>Previous</small>Sequences</a><a class="next" href="07-search.html"><small>Next</small>Search</a></nav></main></div>
+</ul><nav class="pager"><a class="prev" href="05-sequences.html"><small>Previous</small>Sequences</a><a class="next" href="07-search.html"><small>Next</small>Search</a></nav></main></div>
 <script src="search_index.js"></script><script src="manual.js"></script>
 </body></html>

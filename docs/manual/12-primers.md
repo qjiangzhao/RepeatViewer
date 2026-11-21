@@ -38,6 +38,8 @@ the saved settings.
 Check** and **Cloning**. A section keeps what you did in it while you look at
 another one.
 
+![The Primers and Probes workspace on the Design section: the map, the list under it and the settings in the panel on the right.](img/pp_design.png)
+
 **Design**, **PCR** and **Digest** work on one sequence:
 
 - Click a FASTA's name in the Files panel to work on it. Ticking a file's box
@@ -179,11 +181,20 @@ sequence*. Each is drawn as an arrow where it binds (blue: points right;
 orange: points left).
 
 - **Add Primer** types a new one, **From Database** picks saved ones.
+- **From Selection** makes a primer from bases on the sequence: drag over 10 to
+  60 bases on the map, then choose **Forward Primer** (the bases as they are)
+  or **Reverse Primer** (their reverse complement). The primer appears on the
+  sequence and can be dragged or edited like any other. When the selection
+  does not fit, the note by the list says why.
 - **Click** a primer to see its details in the panel on the right and jump to
   it: Tm, hairpin and self-dimer ΔG, where and how well it binds. While a
   primer is selected the design settings are folded to one line, **Design
   Settings**; **Show** opens them again. Clicking a candidate also brings them
   back.
+- The details sum up the dimers with the other ticked primers in one line
+  (for example *Dimers: 6 checked, all ok*) and list only the pairs to look
+  at. **Show All** lists every pair, **Hide** folds the good ones away again.
+  Hover the list to read the full primer names.
 - The selected primer is drawn as a bar in its own row right above its bases.
   **Drag** the bar to move the primer, or drag one of its ends to make it
   longer or shorter. A base that does not match the template is red on the
@@ -207,6 +218,13 @@ site (with padding bases so the enzyme cuts), a sequencing or promoter tail, or
 your own; and the dimer and hairpin checks give ΔG at 37 °C (below −9 kcal/mol
 for dimers or −3 for hairpins is a warning).
 
+**Sites in Genome**: each genome sequence drawn on one scale, forward sites as
+ticks above the bar, reverse sites below (darker = fewer mismatches), and for
+a qPCR pair the number of products per haploid genome, the value to expect in a
+copy-number assay.
+
+![A primer selected on the sequence: its bar above the bases and its details in the panel.](img/pp_primer.png)
+
 Primers are saved in a hidden `name.primers_RV.json` next to the FASTA and
 follow it when it is renamed or moved.
 
@@ -214,42 +232,37 @@ follow it when it is renamed or moved.
 
 **Tools → Primers and Probes → In-silico PCR**, or the **PCR** section of the
 workspace. The products are listed under the map and drawn in the expected gel
-in the panel.
+in the panel. There is no Run button: the products update by themselves when
+you change anything.
 
-![The PCR window: templates and primers on the left, products in the middle, a quick gel on the right.](img/pcr.png)
+![The PCR section: the products under the map, and the primers, the expected gel and the options in the panel.](img/pcr.png)
 
-- **Templates**: click FASTA files in the Files panel to add them (a whole
-  genome works). Each template is one lane.
-- **Primers**: from a sequence's Primers tab, **From Database…**, or
-  **Paste…**. All combinations are tested, as in a real tube, including one
-  primer at both ends.
-- **Kind of PCR**:
-  - **Standard**: every product.
-  - **Satellite ladder**: products that step by a common size are labelled 1×,
-    2×, 3× (the monomer of a tandem repeat).
-- **Mismatches per primer** and **3′ end exact** decide which sites count;
-  **Longest product**, **Polymerase** and **Annealing** set the reaction.
+The panel, from top to bottom:
 
-The products table lists each product with its size, where it is and the
-mismatches of each primer; **Expected yield** is relative (fewer mismatches,
-shorter products and repeated sites give more DNA). The strip above the table
-shows the product you click: the forward primer (blue), the reverse primer
-(orange) and the stretch between. Small arrows are other places the primers
-bind. **Zoom to Product** and **Show All Products** frame the strip; **Copy
-Product Sequence** copies it.
+| Section | What it holds |
+|---------|---------------|
+| **Run on** | **Input**: *Open sequence* (the sequence in the map, live) or *Selected files* (every FASTA ticked in the Files panel, so one pair can be tested on many satellite families at once; the products of all files are listed together, each with its file) |
+| **Primers** | **Forward** and **Reverse**: primers on this sequence. **From Database** puts saved primers on the sequence so they can be chosen. **Kind**, **Mismatches**, **3′ end exact** and **Polymerase** set the reaction |
+| **Products** | Every product the two primers make, best first: **Range**, **Size** and **mm F / R** (mismatches of the forward and the reverse primer at that site). Click a product to see it on the sequence |
+| **Expected gel** | The products next to a size ladder |
+| **Options** | **Open in a Gel**, **Bench Card**, **Save Products** |
 
-Buttons at the bottom:
+- **Kind**: *Standard* lists every product. *Satellite ladder* groups the
+  products that step by a monomer and labels them 1×, 2×, 3×.
+- **Mismatches** (none, or up to 1 to 4 per primer) and **3′ end exact** (no
+  rule, or the last 2 to 5 bases) decide which sites count. **Polymerase** sets
+  how fast long products fall off.
+- The **status box** under the primers says what to expect. Green: *Ready for
+  PCR*, with the expected product size. Amber: the expected product is longer
+  or shorter than the product range set in Design. That is allowed (the tube
+  still makes it); **Set Range to … bp** changes the range in Design to fit.
+  *No product* means the two primers do not face each other on this sequence.
 
-| Button | Opens |
-|--------|-------|
-| **Gel** | The full gel document (below) |
-| **Products File** | The products FASTA, with primers and the template's annotations |
-| **Table** | The products table |
-| **Bench Card** | Mastermix volumes and the cycling program for the bench |
-| **Sites in Genome** | Every binding site of each primer in a genome |
+**Open in a Gel** makes a gel document from this PCR, next to the sequence,
+that you can change (lanes, agarose, ladder; see [The gel](12-primers.md#the-gel)).
 
-**Outputs**, next to the first template: `<template>_PCR_<primers>.fa` (the
-products) and `…_details/` (`_products.tsv`, `_history.json`,
+**Save Products** writes, next to the sequence, `<template>_PCR_<primers>.fa`
+(the products) and `…_details/` (`_products.tsv`, `_history.json`,
 `_result.json`). The products file opens like any multi-FASTA, with the primer
 sites and the template's features on each product.
 
@@ -261,18 +274,65 @@ Phusion or Q5 3 °C above); extension from the longest product wanted (Taq
 1 min per kb, Phusion or Q5 20 s per kb); freezer places from the Primer
 Database. Change the numbers on the right, then **Save PDF** or **Print**.
 
-**Sites in Genome**: each genome sequence drawn on one scale, forward sites as
-ticks above the bar, reverse sites below (darker = fewer mismatches), and for
-a qPCR pair the number of products per haploid genome, the value to expect in a
-copy-number assay.
+## Restriction digest
+
+**Tools → Primers and Probes → Restriction Digest**, or the **Digest** section
+of the workspace. The enzymes that cut the sequence are named in a row above
+the bases on the map and listed in the panel.
+
+![The Digest section: enzyme sites on the map and the list of enzymes in the panel.](img/digest_enzymes.png)
+
+| Section | What it holds |
+|---------|---------------|
+| **Enzyme set** | **Set**: which enzymes to look at. *Methylation-sensitive* holds the enzymes with known CG or CHG sensitivity (HpaII and MspI as a pair). **Show**: enzymes that cut this often are ticked and drawn on the sequence |
+| **Methylation** | **Data**: a Bismark `.cov` or modkit `bedMethyl` file. **Methylated ≥** and **Reads ≥**: a site counts as blocked when a cytosine of the site is methylated at least this much, with at least this many reads, in a context that blocks the enzyme |
+| **Enzymes** | The list: **Enzyme**, **Site**, **Cuts** (sites on this sequence) and **In your data** (sites probably not cut because of methylation in your file) |
+
+- Click an enzyme to go to its first site. Tick or untick any enzyme; only the
+  ticked ones are drawn and digested.
+- **Select All** ticks every enzyme in the list; press it again to untick them
+  all.
+- With methylation data, the rows of the chromosome named like this sequence
+  are read (an extracted region named *chrom:start-end* is shifted to its own
+  positions). Blocked sites are drawn red and dashed: *probably not cut*.
+  Without data the map shows the labels only.
+- The sensitivity of each enzyme (CG, CHG, Dam, Dcm) follows the Promega and
+  NEB tables and REBASE (McClelland et al. 1994). Dam and Dcm only matter for
+  DNA grown in *E. coli*.
+
+**Digest** shows the ticked enzymes as a gel, and the panel changes to the
+result. **Enzymes** on top goes back to the list.
+
+![The result of a digest: one lane for each ticked enzyme, and the bands of the chosen lane.](img/digest.png)
+
+| Section | What it holds |
+|---------|---------------|
+| **Digest** | **Lanes**: one for each ticked enzyme; with methylation data, an enzyme with blocked sites gets a second lane without the data, to compare. **Array**: the repeat period, from monomer annotations (a name with three or more copies), otherwise estimated from the sequence. **Site loss** and **Completeness** (below) |
+| **Gel** | **Agarose** and **Ladder** (*Automatic* or one you choose). Brightness follows DNA mass; very many faint bands of nearby sizes run as a smear |
+| **Lane** | The brightest bands of the chosen lane: **Size** (*n×* is n monomers) and **Brightness** (the share of the lane's DNA in that band) |
+
+- **Site loss**: *From the copies* uses the sites as they are in this sequence,
+  so copies that lost the site by mutation give the 2×, 3× … ladder. *A site in
+  every copy* adds the missing sites at the array period.
+- **Completeness**: the share of molecules cut at an open site. With
+  methylation data, each site is cut with completeness × (1 − share methylated
+  in a blocking context).
+- **Open in a Gel** writes a gel document you can change; **Compare with Gel
+  Photo** puts your real gel next to this one (see [The gel](12-primers.md#the-gel)).
 
 ## The gel
 
 A `.rvgel` file opens as an agarose gel, in the **Gel** section of the workspace
 (every **Open in a Gel** button, **Tools → Primers and Probes → Gel**, or a
 click on a gel in the Files panel while the workspace is in front). Every lane is a ladder, the products of
-a PCR run, or products cut with a restriction enzyme. The gel is saved as it
-changes.
+a PCR run, or products cut with a restriction enzyme. A gel that is a file is
+saved as it changes.
+
+A new, empty gel (**Tools → Primers and Probes → Gel**) holds only a ladder and
+is not a file yet. **Save → Gel** writes it as a `.rvgel` in the current
+folder; from then on it saves itself like any gel. If you leave a new gel that
+you changed and did not save, RepeatViewer asks first: **Save**, **Discard**
+(throw it away) or **Cancel** (stay on the gel).
 
 ![The in-silico gel of a satellite ladder PCR: GeneRuler 1 kb Plus next to the 1×, 2×, 3× … products.](img/gel.png)
 
@@ -286,6 +346,7 @@ changes.
 | **Brightness by amount of DNA** | A band's brightness follows its mass (amount × length), as with SYBR, so short products look fainter |
 | **Show primer-dimer** | Draw the primer-dimer smear |
 | **Cut with** (per lane) | Digest the lane's products with a restriction enzyme |
+| **Save** | **Gel** (the `.rvgel` document), or the figure as SVG, PNG (300 dpi) or PDF |
 
 Hover a band to see what it is, click to select it, double-click to open the
 products file.
@@ -302,7 +363,7 @@ PCR with more mismatches), and expected bands **not seen**.
 **Tools → Primers and Probes → Map → Primers** (or **Repetitive Probes**). It
 opens as the **Map** section of the workspace, with its settings on the right.
 
-![The Map Primers window.](img/primer_map.png)
+![The Map section.](img/primer_map.png)
 
 - **Inputs** as in Design. **Test primers on**: every sequence, or the
   consensus of an alignment.
@@ -325,7 +386,7 @@ The Database is the record of every primer the lab has: sequence and Tm, what it
 amplifies and in which organism, where the tube is, whether it is in stock and
 whether it worked, who ordered it and when, and every change since.
 
-![The Primer Database window.](img/primer_database.png)
+![The Database section.](img/primer_database.png)
 
 It opens as the **Database** section of the workspace.
 
@@ -454,6 +515,64 @@ Painting pools are not added to the Primer Database (they hold thousands of
 oligos); use the order file. Too few probes for the pool size: lower the gap,
 widen the regions or the NGS score window, or rerun Chorus2 with a smaller
 k-mer step or a higher maximum homology.
+
+## Sanger Check
+
+**Tools → Primers and Probes → Sanger Check** checks a clone against its Sanger
+reads: each read is trimmed by quality, aligned to the sequence the clone
+should carry, and every difference is shown with its chromatogram.
+
+![The Sanger Check section: the reads, what they cover of the expected sequence, and the chromatogram around a difference.](img/sanger_check.png)
+
+| Section | What it holds |
+|---------|---------------|
+| **Expected** | **Sequence**: the sequence the clone should carry (click a FASTA in the Files panel, or Browse). **Record** chooses one when the file holds several |
+| **Reads** | **Files**: the `.ab1` files from sequencing (click them in the Files panel, or Browse). Plain `.seq` or FASTA reads work too, but without a chromatogram or quality. **Clear** takes all reads off the list. **Save Reads as FASTA** writes the good part of every read as a FASTA file beside it |
+| **Quality** | **Trim cutoff**: how strictly the ends are trimmed (Mott's rule, as phred uses). **Real from Q**: a difference below this quality is *doubtful* (the machine, not the clone) |
+| **Options** | **Write a report beside the reads** (an HTML page); **Restore Defaults**, **Save** (keep these settings) and **Check** |
+
+The expected sequence is optional. Without one, click an `.ab1` read to look at
+its chromatogram and quality, or save the reads as FASTA.
+
+With an expected sequence, each read is aligned in both directions:
+
+- The **table** lists every read: **Read**, **Direction**, **Covers**,
+  **Identity**, **Difference** and **Quality**.
+- **Coverage of the expected sequence** shows which part each read covers and
+  where the differences are. Amber marks what no read reached: the clone is
+  only confirmed where a read went.
+- Click a difference to see the **chromatogram** around it. The four dyes are
+  G black, A green, T red, C blue; the called base is on top, the expected one
+  underneath when they differ. A clean single peak with a high quality score is
+  a real difference in the clone; a double peak, a shoulder or a low score is a
+  poor call.
+- The **verdict** under the boxes is green only when the reads cover every base
+  and nothing is left over.
+
+## Cloning
+
+**Tools → Primers and Probes → Cloning** plans putting a PCR product into a
+vector: the plasmid size in both orientations and the band a positive colony
+shows in colony PCR.
+
+![The Cloning section: both orientations of the insert and the colony PCR gel.](img/cloning.png)
+
+| Section | What it holds |
+|---------|---------------|
+| **Insert** | **Sequence**: the PCR product, with the primer tails already on it (click a FASTA in the Files panel, or Browse). **Record** chooses one when the file holds several |
+| **Ligation** | **Vector**: pGEM-T Easy, pJET1.2/blunt or your own. **Method**: *TA* needs the 3′ A that Taq leaves; *Blunt* needs a proofreading product; *Restriction* uses the sites in the primer tails, and shows **Enzymes** for the two ends. **Polymerase** |
+| **Your vector** | **Length** of the vector, and **Empty PCR**: the product your colony-PCR pair gives on the vector with no insert (the vector's map or manual says it) |
+| **Options** | **Gel** saves the colony PCR gel; **Report** saves a report of this cloning plan |
+
+The table lists both orientations of the insert (**Orientation**, **Insert**,
+**Plasmid**, **Colony PCR**). A TA or blunt ligation gives both; two different
+enzymes give only the first. The colony PCR product is the empty-vector product
+plus the insert, so a colony with the insert runs that much higher than one
+without. With the empty-vector product given, the page also tells how far a
+sequencing read gets into the insert.
+
+> **Tip.** No vector sequence ships with RepeatViewer, so every size here comes
+> from the numbers you give, never from a guessed map.
 
 ## How it works
 

@@ -912,6 +912,11 @@ class SequenceAnnotationRail(QWidget):
         self._restore_rail_ui_state()
 
     def _expanded_rail_width(self) -> int:
+        strip = getattr(self, "_tab_strip", None)
+        if strip is not None and strip.isHidden():
+            # No strip of buttons (the Primers and Probes workspace): the rail
+            # is as wide as its page, with no empty room beside it.
+            return int(self._module_width)
         return int(self._module_width) + _RAIL_TAB_WIDTH + 1
 
     def _apply_module_geometry(self) -> None:

@@ -363,12 +363,9 @@ def _annotation_view(main, d):
     show_file(main, d["ltr"])
     click_tab(preview(main), "Overview")
     r = rail(main)
-    for i, name in ((0, "rail_display"), (4, "rail_primers")):
-        r.set_current_tab(i)
-        pump(0.8)
-        if name == "rail_primers":
-            reload_primers(main)
-        save(preview(main), name)
+    r.set_current_tab(0)
+    pump(0.8)
+    save(preview(main), "rail_display")
     r.set_current_tab(1)
     pump(0.5)
     save(preview(main), "annotation_view")
@@ -381,35 +378,6 @@ def _dotplot_self(main, d):
     pump(2.5)
     save(preview(main), "dotplot_self")
     click_tab(preview(main), "Overview")
-
-
-@shot("pcr_run")
-def _pcr_run(main, d):
-    """The PCR window after a satellite ladder PCR with the demo primers."""
-    show_file(main, d["array"])
-    r = rail(main)
-    r.set_current_tab(4)
-    pump(0.6)
-    reload_primers(main)
-    panel = next((w for w in main.findChildren(QWidget)
-                  if type(w).__name__ == "PrimersPanel" and w.isVisible()), None)
-    if panel is None:
-        print("  no Primers panel")
-        return
-    from PySide6.QtCore import Qt as _Qt
-    for row in range(panel.table.rowCount()):
-        item = panel.table.item(row, panel.COL_TICK)
-        if item is not None:
-            item.setCheckState(_Qt.CheckState.Checked)
-    pump(0.5)
-
-    def prepare(w):
-        click_button(w, "Satellite ladder")
-        click_button(w, "Run")
-        pump(4.0)
-
-    capture_dialog(main, panel.pcr_button.click, "pcr", prepare=prepare, size=(1280, 820))
-    r.set_current_tab(1)
 
 
 @shot("multi_fasta")
@@ -502,14 +470,6 @@ def _mapping_report(main, d):
 def _pcr_products(main, d):
     show_file(main, d["pcr"])
     save(preview(main), "pcr_products")
-
-
-@shot("gel")
-def _gel(main, d):
-    show_file(main, d["gel"])
-    pump(1.0)
-    save(preview(main), "gel")
-
 
 
 def expand_section(root: QWidget, title: str, expanded: bool = True) -> bool:
@@ -711,12 +671,188 @@ dialog_shot("msa_plot", ("Tools", "Visualize", "MSA plot"), files=["monomers"])
 dialog_shot("mapping", ("Tools", "Mapping"), files=["reads"])
 dialog_shot("tree", ("Tools", "Tree"), files=["monomers"])
 dialog_shot("samtools", ("Tools", "Samtools"), files=["sam"])
-dialog_shot("primer_design", ("Tools", "Primers and Probes", "Design"), files=["ltr"], size=(700, 860))
-dialog_shot("primer_map", ("Tools", "Primers and Probes", "Map"), files=["ltr"], size=(700, 860))
-dialog_shot("primer_database", ("Tools", "Primers and Probes", "Database"))
 dialog_shot("repeat_quantify", ("Tools", "Quantify", "Repeat Quantify"), files=["monomers"])
 dialog_shot("workflows", ("Workflows", "Design and manage your workflows"))
 dialog_shot("wrappers", ("Tools", "Command wrapper", "Manage wrapper"))
+
+
+# ----------------------------------------------------------------------------
+# Primers and Probes workspace. Every section is a page of one tab, so these
+# shots go through the app's own menu and save the Preview panel. They are
+# registered last and close the workspace when done: while it is in front, a
+# click in the Files panel goes to it and not to Preview.
+
+PP = ("Tools", "Primers and Probes")
+
+
+def workspace(main):
+    return main._primers_workspace()
+
+
+def _dismiss_modal(name: str) -> None:
+    w = APP.activeModalWidget()
+    if w is None:
+        return
+    print(f"  {name}: closed a message box ({w.windowTitle()})")
+    if isinstance(w, QDialog):
+        w.reject()
+    else:
+        w.close()
+
+
+def open_section(main, key: str, *path: str, file: Path | None = None):
+    """Open a workspace section from Tools > Primers and Probes. None when it did not open."""
+    if file is not None:
+        show_file(main, file)
+    QTimer.singleShot(1200, lambda: _dismiss_modal(key))
+    menu_action(main, *PP, *path).trigger()
+    pump(2.0)
+    ws = workspace(main)
+    if ws is None or ws.section() != key:
+        print(f"  {key}: the section did not open")
+        return None
+    main._preview_tabs.setCurrentWidget(ws)
+    pump(0.5)
+    return ws
+
+
+def close_workspace(main) -> None:
+    ws = workspace(main)
+    tabs = main._preview_tabs
+    if ws is None:
+        return
+    index = tabs.indexOf(ws)
+    if index >= 0:
+        tabs._close_tab(index, ask=False)
+    pump(0.5)
+
+
+def pp_shot(name):
+    def deco(fn):
+        def run(main, d):
+            try:
+                fn(main, d)
+            finally:
+                close_workspace(main)
+        SHOTS[name] = run
+        return fn
+    return deco
+
+
+def tick_primers(ws) -> None:
+    """Tick every primer on the sequence, so PCR uses them."""
+    from PySide6.QtCore import Qt as _Qt
+    panel = ws.primers_panel()
+    panel.reload()
+    pump(0.5)
+    for row in range(panel.table.rowCount()):
+        item = panel.table.item(row, panel.COL_TICK)
+        if item is not None:
+            item.setCheckState(_Qt.CheckState.Checked)
+    pump(0.5)
+
+
+@pp_shot("pp_design")
+def _pp_design(main, d):
+    ws = open_section(main, "design", "Design", "Primers", file=d["ltr"])
+    if ws is None:
+        return
+    ws.primers_panel().design_pane.design_button.click()
+    pump(6.0)
+    save(preview(main), "pp_design")
+
+
+@pp_shot("pp_primer")
+def _pp_primer(main, d):
+    from repeatviewer.views.primers_workspace import PANEL_PRIMER
+    ws = open_section(main, "design", "Design", "Primers", file=d["array"])
+    if ws is None:
+        return
+    tick_primers(ws)
+    ws.set_section("design", page=PANEL_PRIMER)
+    panel = ws.primers_panel()
+    if panel.table.rowCount():
+        panel.table.setCurrentCell(0, panel.COL_NAME)
+        panel.table.cellClicked.emit(0, panel.COL_NAME)
+    pump(1.0)
+    save(preview(main), "pp_primer")
+
+
+@pp_shot("pcr")
+def _pcr(main, d):
+    """The PCR section after a satellite ladder PCR with the demo primers."""
+    ws = open_section(main, "design", "Design", "Primers", file=d["array"])
+    if ws is None:
+        return
+    tick_primers(ws)
+    ws = open_section(main, "pcr", "In-silico PCR")
+    if ws is None:
+        return
+    kind = ws.primers_panel().pcr_pane.kind
+    for i in range(kind.count()):
+        if "ladder" in kind.itemText(i).lower():
+            kind.setCurrentIndex(i)
+    pump(3.0)
+    save(preview(main), "pcr")
+
+
+@pp_shot("digest")
+def _digest(main, d):
+    ws = open_section(main, "digest", "Restriction Digest", file=d["array"])
+    if ws is None:
+        return
+    pump(1.5)
+    save(preview(main), "digest_enzymes")
+    enzymes = ws.primers_panel().enzyme_pane
+    if not enzymes.ticked_rows():
+        enzymes.select_all_button.click()
+    enzymes.digest_button.click()
+    pump(3.0)
+    save(preview(main), "digest")
+
+
+@pp_shot("gel")
+def _gel(main, d):
+    ws = main._ensure_primers_workspace()
+    if ws is None or not d.get("gel"):
+        print("  gel: no workspace or no demo gel")
+        return
+    ws.show_gel(d["gel"])
+    main._preview_tabs.setCurrentWidget(ws)
+    pump(1.5)
+    save(preview(main), "gel")
+
+
+@pp_shot("primer_map")
+def _primer_map(main, d):
+    if open_section(main, "map", "Map", "Primers", file=d["ltr"]) is not None:
+        save(preview(main), "primer_map")
+
+
+@pp_shot("primer_database")
+def _primer_database(main, d):
+    if open_section(main, "database", "Database") is not None:
+        save(preview(main), "primer_database")
+
+
+@pp_shot("sanger_check")
+def _sanger_check(main, d):
+    """With .ab1 files in the demo folder (--demo DIR) the page shows a real check."""
+    ws = open_section(main, "sanger", "Sanger Check", file=d["ltr"])
+    if ws is None:
+        return
+    reads = sorted(Path(d["folder"]).glob("*.ab1"))
+    page = ws.hosted_page("sanger")
+    if reads and page is not None:
+        page.add_reads(reads)
+        pump(2.0)
+    save(preview(main), "sanger_check")
+
+
+@pp_shot("cloning")
+def _cloning(main, d):
+    if open_section(main, "cloning", "Cloning", file=d.get("pcr") or d["ltr"]) is not None:
+        save(preview(main), "cloning")
 
 
 def main() -> int:

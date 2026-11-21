@@ -22,6 +22,7 @@ from PySide6.QtWidgets import (
     QComboBox,
     QDialog,
     QFrame,
+    QGridLayout,
     QHBoxLayout,
     QHeaderView,
     QLabel,
@@ -83,6 +84,30 @@ def _hrule(parent: QWidget) -> QFrame:
     line.setFrameShape(QFrame.Shape.HLine)
     line.setFrameShadow(QFrame.Shadow.Sunken)
     return line
+
+
+class _OligoEdit(QLineEdit):
+    """The oligo field with its two ends named inside the box: 5′ left, 3′ right."""
+
+    def __init__(self, text: str = "", parent: QWidget | None = None) -> None:
+        super().__init__(text, parent)
+        self._ends: list[QLabel] = []
+        for word in ("5′", "3′"):
+            lab = QLabel(word, self)
+            lab.setFont(mono_font(2))
+            lab.setStyleSheet("color: palette(placeholder-text); background: transparent;")
+            lab.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
+            lab.adjustSize()
+            self._ends.append(lab)
+        room = max(lab.width() for lab in self._ends) + 8
+        self.setTextMargins(room, 0, room, 0)
+
+    def resizeEvent(self, event) -> None:  # noqa: N802
+        super().resizeEvent(event)
+        left, right = self._ends
+        y = (self.height() - left.height()) // 2
+        left.move(8, y)
+        right.move(self.width() - right.width() - 8, y)
 
 
 def _box(parent: QWidget, title: str, help_title: str = "", help_text: str = "") -> tuple[QFrame, QVBoxLayout]:
@@ -187,37 +212,45 @@ class EditPrimerDialog(QDialog):
         root.setContentsMargins(20, 16, 20, 14)
         root.setSpacing(12)
 
-        top = QHBoxLayout()
-        top.setSpacing(10)
-        top.addWidget(QLabel("Name", self))
+        # One grid for the two rows: the labels in one column, Name and the
+        # oligo start on one line, the two buttons are equal and end where the
+        # "?" ends, and every field has the same height.
+        top = QGridLayout()
+        top.setContentsMargins(0, 0, 0, 0)
+        top.setHorizontalSpacing(10)
+        top.setVerticalSpacing(8)
+        top.addWidget(QLabel("Name", self), 0, 0)
         self.name_edit = QLineEdit(primer.name, self)
         self.name_edit.setFixedWidth(240)
-        top.addWidget(self.name_edit)
-        top.addSpacing(10)
-        top.addWidget(QLabel("Note", self))
+        top.addWidget(self.name_edit, 0, 1)
+        top.addWidget(QLabel("Note", self), 0, 2)
         self.note_edit = QLineEdit(primer.note, self)
-        self.note_edit.setMaximumWidth(520)
-        top.addWidget(self.note_edit, 1)
-        top.addWidget(make_help_button(self, "Edit Primer", EDIT_HELP))
-        root.addLayout(top)
+        # Note runs up to the "?", which ends where Copy ends below it.
+        note_row = QHBoxLayout()
+        note_row.setContentsMargins(0, 0, 0, 0)
+        note_row.setSpacing(10)
+        note_row.addWidget(self.note_edit, 1)
+        note_row.addWidget(make_help_button(self, "Edit Primer", EDIT_HELP))
+        top.addLayout(note_row, 0, 3, 1, 3)
 
-        seq_row = QHBoxLayout()
-        seq_row.setSpacing(8)
-        l5 = QLabel("5′", self)
-        l5.setFont(mono_font(2))
-        seq_row.addWidget(l5)
-        self.seq_edit = QLineEdit("" if primer.sequence == "N" and new else primer.sequence, self)
+        top.addWidget(QLabel("Sequence", self), 1, 0)
+        self.seq_edit = _OligoEdit("" if primer.sequence == "N" and new else primer.sequence, self)
         self.seq_edit.setFont(mono_font(4))
         self.seq_edit.setPlaceholderText("Type or paste the oligo, 5′ to 3′ (lower-case 5′ part = tail)")
-        seq_row.addWidget(self.seq_edit, 1)
-        l3 = QLabel("3′", self)
-        l3.setFont(mono_font(2))
-        seq_row.addWidget(l3)
+        top.addWidget(self.seq_edit, 1, 1, 1, 3)
         self.rc_button = QPushButton("Reverse Complement", self)
         self.copy_button = QPushButton("Copy", self)
-        seq_row.addWidget(self.rc_button)
-        seq_row.addWidget(self.copy_button)
-        root.addLayout(seq_row)
+        # two equal buttons; Copy ends where the "?" ends
+        button_w = max(self.rc_button.sizeHint().width(), self.copy_button.sizeHint().width())
+        for column, button in ((4, self.rc_button), (5, self.copy_button)):
+            button.setFixedWidth(button_w)
+            top.addWidget(button, 1, column)
+        top.setColumnStretch(3, 1)
+        field_h = max(w.sizeHint().height()
+                      for w in (self.name_edit, self.note_edit, self.seq_edit))
+        for w in (self.name_edit, self.note_edit, self.seq_edit):
+            w.setFixedHeight(field_h)
+        root.addLayout(top)
 
         self.metrics = QLabel(self)
         self.metrics.setTextFormat(Qt.TextFormat.RichText)

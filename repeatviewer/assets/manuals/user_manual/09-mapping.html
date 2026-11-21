@@ -152,8 +152,10 @@ mapped reads.</p>
 with the same name would mix up their hits. RepeatViewer stops with a message if
 the reference has repeated names.</p>
 <h2 id="what-is-written"><span class="secnum">9.2</span>What is written</h2>
-<p>Only the mapper's own file is placed next to the input; everything else goes
-into <code>&lt;input&gt;_minimap_details/</code> (or <code>_hisat2_details/</code>):</p>
+<p>The mapper's alignment and the contig document sit next to the input. Optional
+consensus / placed / unused FASTA and the variants table are written beside
+them when those options are on. A temporary <code>_details/</code> workspace is used
+while the run works, then deleted:</p>
 <table>
 <thead>
 <tr>
@@ -167,34 +169,30 @@ into <code>&lt;input&gt;_minimap_details/</code> (or <code>_hisat2_details/</cod
 <td>The mapper's alignment (opens in Preview)</td>
 </tr>
 <tr>
-<td><code>…_report.html</code></td>
-<td>Run report: numbers, coverage plot, features, most frequent differences, methods text, citations</td>
+<td><code>&lt;input&gt;_minimap.rvmap</code></td>
+<td>Contig-view snapshot of the run</td>
 </tr>
 <tr>
 <td><code>…_consensus.fa</code></td>
-<td>Consensus of the mapped reads, with the reference annotations moved onto it</td>
+<td>Consensus of the mapped reads (optional)</td>
 </tr>
 <tr>
 <td><code>…_mapped.fa</code></td>
-<td>The placed reads, turned to the reference strand, with lifted annotations</td>
+<td>The placed reads, on the reference strand (optional)</td>
 </tr>
 <tr>
 <td><code>…_unused.fa</code></td>
-<td>Reads not placed, with the reason in the header</td>
+<td>Reads not placed (optional)</td>
 </tr>
 <tr>
-<td><code>…_variants.tsv</code>, <code>…_features.tsv</code>, <code>…_reads.tsv</code></td>
-<td>Every difference; every reference feature in every read; every placement</td>
-</tr>
-<tr>
-<td><code>…_methods.txt</code>, <code>…_commands.txt</code></td>
-<td>A methods paragraph and the exact command lines</td>
+<td><code>…_variants.tsv</code></td>
+<td>Differences table (optional)</td>
 </tr>
 </tbody>
 </table>
-<p>A hidden <code>&lt;alignment&gt;.rv.json</code> next to the alignment keeps the run record; it
-follows the alignment when you rename it. A second run writes <code>_2</code>; nothing is
-overwritten. No samtools or pysam is needed.</p>
+<p>A <code>&lt;input&gt;_minimap.rvmap</code> (or <code>_hisat</code>) contig document next to the alignment
+opens in Contig view. A second run writes <code>_2</code>; nothing is overwritten. No
+samtools or pysam is needed for Mapping itself.</p>
 <h2 id="the-genome-browser-sam-bam-cram"><span class="secnum">9.3</span>The genome browser (SAM, BAM, CRAM)</h2>
 <p>A SAM result opens in the genome browser. BAM and CRAM files from other tools,
 and GFF, GTF and BED files, open there too. For large mappings, sort and index
@@ -246,8 +244,8 @@ slider, <strong>Select</strong>, <strong>Fit</strong>, <strong>Browser ▾</stro
 <p><strong>Tools → Samtools</strong></p>
 <p>Prepares alignment files (SAM, BAM, CRAM, also <code>.sam.gz</code>) from RepeatViewer's
 Mapping or from any other mapper, mostly so that large files open quickly in the
-genome browser. The menu has <strong>Sort</strong>, <strong>Index</strong> and <strong>Convert</strong> (run on the
-selected files with the saved settings) and <strong>Change Samtools parameters</strong>.</p>
+genome browser. <strong>Tools → Samtools</strong> opens the window; use the <strong>Sort</strong>,
+<strong>Index</strong> or <strong>Convert</strong> tab and <strong>Run</strong>.</p>
 <figure id="fig-9-3"><img src="img/samtools.png" alt="The Samtools window, Sort tab." width="608" loading="lazy"><figcaption><b>Figure 9.3.</b> The Samtools window, Sort tab.</figcaption></figure>
 <table>
 <thead>

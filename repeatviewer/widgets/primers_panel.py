@@ -190,8 +190,8 @@ class _Tile(QWidget):
 def _scrolled(inner: QWidget, parent: QWidget) -> QScrollArea:
     """A page that scrolls when its contents are taller than the panel."""
     area = QScrollArea(parent)
-    # room for the scroll bar, so nothing is clipped on the right
-    inner.setContentsMargins(0, 0, 12, 0)
+    # the same right edge as the panels of Painting, Map, Sanger Check and Cloning
+    inner.setContentsMargins(0, 0, 0, 0)
     # Never wider than the panel: a wide child (a gel, a table) shrinks
     # instead of pushing the help buttons under the scroll bar.
     policy = inner.sizePolicy()

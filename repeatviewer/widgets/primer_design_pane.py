@@ -48,7 +48,8 @@ RUN_FILES = "files"
 #   three boxes: 3 * BOX3_W + 2 * GAP3   = FIELD_W (min, opt, max in a header)
 #   two boxes:   2 * BOX2_W + JOIN2_W     = FIELD_W
 #   one box:     BOX2_W + JOIN2_W (the unit) stays on the same left edge
-LABEL_W = 86
+# wide enough for the longest label ("Max homology") with its last letter whole
+LABEL_W = 90
 # The label and field columns together fill the panel (330 px wide) up to the
 # help buttons, also when a scroll bar is shown.
 FIELD_W = 198
@@ -350,6 +351,54 @@ def _field_buttons(parent: QWidget, *buttons: QWidget, label: str = "") -> QHBox
     return row
 
 
+def _field_path(row, *, browse_w: int | None = None) -> None:
+    """A file field in the field column: as wide as every other field.
+
+    The path box has a wide minimum of its own for dialogs; here it would be
+    cut off at the right (no round end, the text out of the box).
+    """
+    row.setFixedWidth(FIELD_W)
+    row.line_edit().setMinimumWidth(0)
+    row._browse_btn.setFixedWidth(FIELD_W if browse_w is None else browse_w)
+
+
+class MiddleElideCombo(QComboBox):
+    """A drop-down menu whose shown name is cut in the middle when it does not fit.
+
+    Record names share their beginning and differ at the end. The opened list
+    is as wide as the longest name, and the whole name is in the tooltip.
+    """
+
+    def __init__(self, parent: QWidget | None = None) -> None:
+        super().__init__(parent)
+        self.currentIndexChanged.connect(
+            lambda _i: self.setToolTip(self.currentText()))
+
+    def paintEvent(self, event) -> None:  # noqa: N802
+        from PySide6.QtWidgets import QStyle, QStyleOptionComboBox, QStylePainter
+
+        painter = QStylePainter(self)
+        option = QStyleOptionComboBox()
+        self.initStyleOption(option)
+        painter.drawComplexControl(QStyle.ComplexControl.CC_ComboBox, option)
+        field = self.style().subControlRect(
+            QStyle.ComplexControl.CC_ComboBox, option,
+            QStyle.SubControl.SC_ComboBoxEditField, self)
+        option.currentText = self.fontMetrics().elidedText(
+            option.currentText, Qt.TextElideMode.ElideMiddle, max(0, field.width() - 4))
+        painter.drawControl(QStyle.ControlElement.CE_ComboBoxLabel, option)
+
+    def showPopup(self) -> None:  # noqa: N802
+        view = self.view()
+        view.setMinimumWidth(max(self.width(), view.sizeHintForColumn(0) + 32))
+        super().showPopup()
+
+    def minimumSizeHint(self):  # noqa: N802
+        hint = super().minimumSizeHint()
+        hint.setWidth(40)          # a long name never makes the box wider
+        return hint
+
+
 def _action_row(parent: QWidget, left: QWidget, *right: QWidget) -> QWidget:
     """The buttons at the end of a panel: ``left`` starts where the labels
     start, ``right`` end where the fields end."""
@@ -577,16 +626,11 @@ class DesignPane(QWidget):
         sec, sl, self.adv_title = _section("Advanced", self, "Advanced", ADVANCED_HELP)
         self.adv_toggle = QPushButton("Show", sec)
         self.adv_toggle.setCheckable(True)
-        self.adv_toggle.setFixedWidth(HALF_ROW_W)
         self.adv_summary = QLabel(sec)
         self.adv_summary.setWordWrap(True)
         self.adv_summary.setStyleSheet("color: palette(placeholder-text);")
-        # at the left edge, on the grid of the two buttons at the top
-        tr = QHBoxLayout()
-        tr.setContentsMargins(0, 0, 0, 0)
-        tr.addWidget(self.adv_toggle)
-        tr.addStretch(1)
-        sl.addLayout(tr)
+        # in the field column, as wide as the fields above it
+        sl.addLayout(_field_buttons(sec, self.adv_toggle))
         sl.addWidget(self.adv_summary)
         self.adv_body = QWidget(sec)
         ab = QVBoxLayout(self.adv_body)
@@ -642,7 +686,7 @@ class DesignPane(QWidget):
             browse_title="Repeats the probes must not match",
             file_filter="FASTA (*.fa *.fasta *.fas *.fna);;All files (*)",
             browse_below=True, elide_middle=True)
-        self.avoid_path.setFixedWidth(FIELD_W)
+        _field_path(self.avoid_path)
         sl.addLayout(_row("Avoid file", self.avoid_path, parent=sec, top=True))
         self.avoid_others = QCheckBox("Avoid the other selected files", sec)
         self.avoid_others.setChecked(bool(s.fish_avoid_other_inputs))
@@ -693,15 +737,17 @@ class DesignPane(QWidget):
         self.save_button = QPushButton("Save", sec)
         self.design_button = QPushButton("Design", sec)
         self.design_button.setDefault(True)
-        br = QHBoxLayout()
+        # Save in the field column, as wide as the fields above it
+        sl.addLayout(_field_buttons(sec, self.save_button))
+        # The workspace takes these two to the top of the panel and hides the row.
+        self.end_row = QWidget(sec)
+        br = QHBoxLayout(self.end_row)
         br.setContentsMargins(0, 2, 0, 0)
-        self.save_button.setFixedWidth(HALF_ROW_W)
         br.setSpacing(6)
-        br.addWidget(self.save_button)
         br.addWidget(self.defaults_button)
         br.addStretch(1)
         br.addWidget(self.design_button)
-        sl.addLayout(br)
+        sl.addWidget(self.end_row)
         self.saved_note = QLabel("", sec)
         self.saved_note.setStyleSheet("color: palette(placeholder-text);")
         sl.addWidget(self.saved_note)
@@ -965,7 +1011,8 @@ class DesignPane(QWidget):
         self.region_rule.setVisible(not files)
         self.design_button.setText("Run" if files else "Design")
         self.run_note.setText(
-            "Every FASTA ticked in Files, with the progress bar and report files."
+            "Every FASTA ticked in Files (the highlighted one when none is ticked), "
+            "with the progress bar and report files."
             if files else "The open sequence, live. Nothing is written yet.")
         self.push_overlay()
 

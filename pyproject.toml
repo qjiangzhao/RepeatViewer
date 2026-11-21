@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "repeatviewer"
-version = "1.1.0"
+dynamic = ["version"]
 description = "RepeatViewer: PySide6 desktop app for TE curation, annotation, and visualization"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -44,6 +44,9 @@ theme-flat = ["pyqtdarktheme-fork>=2.3.2"]
 
 [project.scripts]
 repeatviewer = "repeatviewer.cli:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "repeatviewer.__version__" }
 
 [tool.setuptools.packages.find]
 where = ["."]

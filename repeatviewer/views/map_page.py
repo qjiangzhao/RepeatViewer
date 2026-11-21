@@ -215,7 +215,7 @@ class MapPage(QWidget):
         outer.setSpacing(0)
         middle = QWidget(self)
         lay = QVBoxLayout(middle)
-        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setContentsMargins(12, 6, 12, 12)
         lay.setSpacing(10)
         from repeatviewer.widgets.primer_design_pane import VerdictLabel
 
@@ -253,7 +253,7 @@ class MapPage(QWidget):
         panel = QWidget(self)
         panel.setFixedWidth(PANEL_W)
         pl = QVBoxLayout(panel)
-        pl.setContentsMargins(10, 8, 10, 8)
+        pl.setContentsMargins(10, 6, 10, 8)
         pl.setSpacing(6)
         title = QHBoxLayout()
         title.addWidget(QLabel("<b>Map</b>", panel), 1)

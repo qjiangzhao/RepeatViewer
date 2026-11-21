@@ -729,3 +729,16 @@ def test_layout_rules_in_the_workspace(qapp, isolated_settings, two_files):
     assert page.bottom.isAncestorOf(pcr.products_title) and page.bottom.isAncestorOf(pcr.table)
     hidden = [w for w in pcr.findChildren(type(page.bottom)) if w.isHidden()]
     assert hidden                                              # the emptied Products section
+
+
+def test_side_panel_is_as_wide_as_in_the_other_sections(qapp, isolated_settings, two_files):
+    from repeatviewer.widgets.primer_design_pane import FIELD_W
+
+    page = _page(two_files[0])
+    rail = page.panel._rail
+    # no hidden strip of buttons keeps empty room beside the settings
+    assert rail.maximumWidth() == rail.minimumWidth() == rail._module_width == 330
+    design = page.primers.design_pane
+    # Show (Advanced) and Save (Options) sit in the field column, field-wide
+    assert design.adv_toggle.maximumWidth() == design.save_button.maximumWidth() == FIELD_W
+    assert design.end_row.isHidden()

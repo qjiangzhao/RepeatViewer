@@ -38,6 +38,7 @@ from repeatviewer.widgets.primer_design_pane import (
     BOX2_W,
     FIELD_W,
     LABEL_W,
+    _field_path,
     _row,
     _rule,
     _section,
@@ -162,7 +163,7 @@ class PaintingPage(QWidget):
         outer.setSpacing(0)
         middle = QWidget(self)
         lay = QVBoxLayout(middle)
-        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setContentsMargins(12, 6, 12, 12)
         lay.setSpacing(10)
         from repeatviewer.widgets.primer_design_pane import VerdictLabel
 
@@ -199,7 +200,7 @@ class PaintingPage(QWidget):
         panel = QWidget(self)
         inner = QWidget(panel)
         pl = QVBoxLayout(inner)
-        pl.setContentsMargins(10, 8, 22, 8)
+        pl.setContentsMargins(10, 6, 10, 8)
         pl.setSpacing(6)
         title = QHBoxLayout()
         title.addWidget(QLabel("<b>Chromosome Painting</b>", inner), 1)
@@ -218,16 +219,14 @@ class PaintingPage(QWidget):
             sec, initial=ps.genome_fasta or None, placeholder="Genome FASTA",
             browse_title="Genome FASTA", file_filter="FASTA (*.fa *.fasta *.fna);;All files (*)",
             browse_below=True, elide_middle=True)
-        self.genome.setFixedWidth(FIELD_W)
-        self.genome._browse_btn.setFixedWidth(FIELD_W)
+        _field_path(self.genome)
         self.genome_row = _row("Genome", self.genome, parent=sec, top=True)
         sl.addLayout(self.genome_row)
         self.bed = PathBrowseRow(
             sec, initial=ps.import_bed or None, placeholder="Chorus2 BED",
             browse_title="Chorus2 BED", file_filter="BED (*.bed);;All files (*)",
             browse_below=True, elide_middle=True)
-        self.bed.setFixedWidth(FIELD_W)
-        self.bed._browse_btn.setFixedWidth(FIELD_W)
+        _field_path(self.bed)
         self.bed_row = _row("Chorus2 BED", self.bed, parent=sec, top=True)
         sl.addLayout(self.bed_row)
         pl.addWidget(sec)

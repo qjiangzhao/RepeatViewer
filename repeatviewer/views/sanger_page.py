@@ -37,6 +37,8 @@ from repeatviewer.widgets.help_button import make_help_button
 from repeatviewer.widgets.primer_design_pane import (
     FIELD_W,
     LABEL_W,
+    MiddleElideCombo,
+    _field_path,
     _row,
     _rule,
     _section,
@@ -159,7 +161,7 @@ class SangerPage(QWidget):
 
         middle = QWidget(self)
         lay = QVBoxLayout(middle)
-        lay.setContentsMargins(12, 12, 12, 12)
+        lay.setContentsMargins(12, 6, 12, 12)
         lay.setSpacing(10)
         from repeatviewer.widgets.primer_design_pane import VerdictLabel
 
@@ -180,7 +182,7 @@ class SangerPage(QWidget):
         head.setSectionResizeMode(4, QHeaderView.ResizeMode.Stretch)
         for c, w in ((0, 170), (1, 90), (2, 120), (3, 80), (5, 90)):
             self.table.setColumnWidth(c, w)
-        self.table.setMinimumHeight(90)
+        self.table.setMinimumHeight(64)
         lay.addWidget(_card(self.table, middle))
 
         cov_head = QHBoxLayout()
@@ -196,6 +198,8 @@ class SangerPage(QWidget):
         trace_head.addWidget(make_help_button(middle, "Chromatogram", TRACE_HELP))
         lay.addLayout(trace_head)
         self.trace = TraceView(middle)
+        # short enough for the last box to keep its bottom edge in a low window
+        self.trace.setMinimumHeight(80)
         lay.addWidget(_card(self.trace, middle), 1)
         lay.addWidget(self.verdict)     # under the boxes, when there is one
         _results_surface(middle)
@@ -207,8 +211,8 @@ class SangerPage(QWidget):
         panel.setFixedWidth(PANEL_W)
         panel.setObjectName("sangerPanel")
         pl = QVBoxLayout(panel)
-        pl.setContentsMargins(10, 8, 10, 8)
-        pl.setSpacing(2)
+        pl.setContentsMargins(10, 6, 10, 8)
+        pl.setSpacing(6)
         title = QHBoxLayout()
         title.addWidget(QLabel("<b>Sanger Check</b>", panel), 1)
         title.addWidget(make_help_button(panel, "Sanger Check", SANGER_HELP))
@@ -223,12 +227,11 @@ class SangerPage(QWidget):
             browse_title="Expected Sequence",
             file_filter="Sequences (*.fa *.fasta *.fas *.fna *.txt *.seq);;All files (*)",
             browse_below=True, elide_middle=True)
-        self.expected_path.setFixedWidth(FIELD_W)
+        _field_path(self.expected_path)
         self.expected_path.set_start_dir(str(self._folder))
         # every button of the panel is as wide as the fields, or half of that
-        self.expected_path._browse_btn.setFixedWidth(FIELD_W)
         sl.addLayout(_row("Sequence", self.expected_path, parent=sec, top=True))
-        self.record_combo = QComboBox(sec)
+        self.record_combo = MiddleElideCombo(sec)
         self.record_combo.setFixedWidth(FIELD_W)
         sl.addLayout(_row("Record", self.record_combo, parent=sec))
         pl.addWidget(sec)
@@ -241,6 +244,7 @@ class SangerPage(QWidget):
             file_filter="Sanger reads (*.ab1 *.abi *.seq *.fa *.fasta *.txt);;All files (*)",
             browse_below=True, elide_middle=True)
         self.reads_path.setFixedWidth(FIELD_W)
+        self.reads_path.line_edit().setMinimumWidth(0)
         self.reads_path.set_browse_handler(self._on_add_reads)
         # Browse and Clear side by side under the field, two equal halves
         half = (FIELD_W - 6) // 2
@@ -309,6 +313,7 @@ class SangerPage(QWidget):
         self.clear_button.clicked.connect(self._on_clear_reads)
         self.fasta_button.clicked.connect(self._on_save_fasta)
         self.record_combo.currentIndexChanged.connect(self._on_record)
+        self._show_record()     # a sequence handed over when the page opens
         self.table.itemSelectionChanged.connect(self._on_row)
         self.check_button.clicked.connect(self.recheck)
         self.save_button.clicked.connect(self._on_save)
@@ -346,7 +351,29 @@ class SangerPage(QWidget):
         self._expected = str(sequence or "").upper()
         if name:
             self._expected_name = name
+        self._show_record()
         self.recheck()
+
+    def _show_record(self) -> None:
+        """Record names the expected sequence, also when it came from the open
+        sequence and not from a file picked here."""
+        combo = self.record_combo
+        if not self._expected:
+            return
+        for i in range(combo.count()):
+            data = combo.itemData(i)
+            if data and data[0] == self._expected_name and data[1].upper() == self._expected:
+                if combo.currentIndex() != i:
+                    combo.blockSignals(True)
+                    combo.setCurrentIndex(i)
+                    combo.blockSignals(False)
+                return
+        combo.blockSignals(True)
+        combo.clear()
+        combo.addItem(f"{self._expected_name} ({len(self._expected):,} bp)",
+                      (self._expected_name, self._expected))
+        combo.blockSignals(False)
+        combo.setToolTip(combo.currentText())
 
     def _on_pick_expected(self) -> None:
         path = self.expected_path.path()
