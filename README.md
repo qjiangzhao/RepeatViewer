@@ -287,6 +287,14 @@ Background jobs show progress in the status bar; **Stop** cancels the active tas
 
 ---
 
+## Citation
+
+If you use RepeatViewer, please cite:
+
+> Qian J, El-nagish A, Szatkowski S, Maiwald S, Sultana N, Costard D, Rudzinski A, Schmidt N, Heitkam T. 2026. RepeatViewer: a platform for explorative analysis of repetitive DNAs. bioRxiv, https://doi.org/10.64898/2026.11.23.768287
+
+---
+
 ## Project structure
 
 ```

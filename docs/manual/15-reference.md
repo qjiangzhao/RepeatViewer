@@ -99,8 +99,12 @@ input.
 
 ## Citation
 
-If RepeatViewer contributes to your work, please mention **RepeatViewer** for
-curation, analysis and visualisation, and cite **TEtrimmer** (*Nature
+If RepeatViewer contributes to your work, please cite:
+
+> Qian J, El-nagish A, Szatkowski S, Maiwald S, Sultana N, Costard D, Rudzinski A, Schmidt N, Heitkam T. 2026. RepeatViewer: a platform for explorative analysis of repetitive DNAs. bioRxiv,
+> [https://doi.org/10.64898/2026.11.23.768287](https://doi.org/10.64898/2026.11.23.768287)
+
+Please also cite **TEtrimmer** (*Nature
 Communications*, 2025) where its methods are used. Tool reports (Tree, Mapping,
 Primers) include a methods paragraph and the references of the programs they
 ran; cite those programs too.
